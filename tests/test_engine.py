@@ -4,11 +4,11 @@ from os.path import join
 from thumbor.config import Config
 from thumbor.context import Context
 from thumbor.engines.pil import Engine as PileEngine
-from thumbor.engines.wand import Engine
+from imagemagick_engine.engine import Engine
 from unittest import TestCase
 
 
-STORAGE_PATH = abspath(join(dirname(__file__), "../fixtures/images/"))
+STORAGE_PATH = abspath(join(dirname(__file__), "./fixtures/images/"))
 
 
 class ImageMagickEngineTestCase(TestCase):
@@ -68,7 +68,8 @@ class ImageMagickEngineTestCase(TestCase):
 
         engine.load(buffer, None)
 
-        engine.set_image_data(buffer)
+        _, data = engine.image_data_as_rgb()
+        engine.set_image_data(data)
 
         assert engine.image.format == "JPEG"
         assert engine.image.size == (300, 400)
@@ -81,7 +82,8 @@ class ImageMagickEngineTestCase(TestCase):
 
         engine.load(buffer, None)
 
-        engine.set_image_data(buffer)
+        _, data = engine.image_data_as_rgb()
+        engine.set_image_data(data)
 
         assert engine.image.format == "PNG"
         assert engine.image.size == (691, 212)
