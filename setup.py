@@ -29,7 +29,7 @@ ImageMagick imaging engine for Thumbor.
     packages=find_packages(),
     include_package_data=True,
     install_requires=[
-        "thumbor<7.0.0",
+        "thumbor>=7.0.0a1",
         "Wand==0.6.*,>=0.6.3",
     ],
     extras_require={
