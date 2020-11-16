@@ -39,3 +39,9 @@ repos:
         entry: make black
         types: [python]
         pass_filenames: false
+      - id: tests
+        name: tests
+        language: system
+        entry: make test
+        types: [python]
+        pass_filenames: false
