@@ -1,0 +1,41 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v3.2.0
+    hooks:
+      - id: check-executables-have-shebangs
+      - id: check-json
+      - id: check-merge-conflict
+      - id: check-symlinks
+      - id: check-vcs-permalinks
+      - id: check-yaml
+        args: ["--unsafe"]
+      - id: end-of-file-fixer
+        types: [non-executable, file, text]
+        exclude_types: [markdown]
+      - id: mixed-line-ending
+      - id: trailing-whitespace
+        types: [non-executable, file, text]
+        exclude_types: [markdown]
+  - repo: meta
+    hooks:
+      - id: check-useless-excludes
+  - repo: local
+    hooks:
+      - id: isort
+        name: isort
+        language: system
+        entry: make isort
+        types: [python]
+        pass_filenames: false
+      - id: flake8
+        name: flake8
+        language: system
+        entry: make flake8
+        types: [python]
+        pass_filenames: false
+      - id: black
+        name: black
+        language: system
+        entry: make black
+        types: [python]
+        pass_filenames: false
