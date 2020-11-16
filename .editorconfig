@@ -1,0 +1,27 @@
+# EditorConfig is awesome! Check https://EditorConfig.org. It helps developers
+# define and maintain consistent coding styles between different editors/IDEs.
+
+# top-most EditorConfig file (no other file in a parent directory will be used)
+root = true
+
+# For all file types
+[*]
+end_of_line = lf  # Unix-style newlines
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# Default charset
+charset = utf-8
+
+# Default indent style and size
+indent_style = space
+indent_size = 4
+
+[Makefile]
+indent_style = tab
+
+[*.{yml,yaml}]
+indent_size = 2
+
+[*.md]
+trim_trailing_whitespace = false
