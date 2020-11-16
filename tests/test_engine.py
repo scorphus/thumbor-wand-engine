@@ -1,4 +1,3 @@
-from io import BytesIO
 from os.path import abspath
 from os.path import dirname
 from os.path import join
@@ -7,7 +6,6 @@ from thumbor.context import Context
 from thumbor.engines.pil import Engine as PileEngine
 from thumbor.engines.wand import Engine
 from unittest import TestCase
-from wand.image import Image
 
 
 STORAGE_PATH = abspath(join(dirname(__file__), "../fixtures/images/"))
