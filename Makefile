@@ -43,3 +43,14 @@ pyclean:
 	@find . -type f -iname '.coverage' -exec rm -rf \{\} + -print
 	@find . -type f -name "*.pyc" -delete -print
 .PHONY: pyclean
+
+unit:
+	@pytest -sv --cov=imagemagick_engine tests/
+.PHONY: unit
+
+coverage-html:
+	@coverage html
+.PHONY: coverage-html
+
+test: unit
+.PHONY: test
