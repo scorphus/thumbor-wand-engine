@@ -10,11 +10,15 @@ setup:
 	@PIP_REQUIRE_VIRTUALENV=true pip install -U -e .[tests]
 	@pre-commit install -f --hook-type pre-commit
 	@pre-commit install -f --hook-type pre-push
+	@git submodule update --init --recursive
+	@PIP_REQUIRE_VIRTUALENV=true pip install -U -e thumbor
 .PHONY: setup
 
 # install dependencies
 setup-ci:
 	@pip install -U -e .[tests]
+	@git submodule update --init --recursive
+	@pip install -U -e thumbor
 .PHONY: setup-ci
 
 # run isort, black and flake8 for style guide enforcement
@@ -23,7 +27,7 @@ isort:
 .PHONY: isort
 
 black:
-	@black .
+	@black --config ./pyproject.toml .
 .PHONY: black
 
 flake8:
@@ -47,6 +51,10 @@ pyclean:
 unit:
 	@pytest -sv --cov=imagemagick_engine tests/
 .PHONY: unit
+
+integration:
+	@pytest -sv --cov=imagemagick_engine integration_tests/
+.PHONY: integration
 
 coverage-html:
 	@coverage html

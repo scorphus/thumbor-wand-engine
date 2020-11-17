@@ -1,0 +1,3 @@
+[submodule "thumbor"]
+	path = thumbor
+	url = git@github.com:thumbor/thumbor.git
