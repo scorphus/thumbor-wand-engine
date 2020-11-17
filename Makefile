@@ -17,7 +17,6 @@ setup:
 # install dependencies
 setup-ci:
 	@pip install -U -e .[tests]
-	@git submodule update --init --recursive
 	@pip install -U -e thumbor
 .PHONY: setup-ci
 
@@ -62,3 +61,7 @@ coverage-html:
 
 test: unit
 .PHONY: test
+
+test-ci:
+	@if [ "$$LINT_TEST" ]; then $(MAKE) lint; elif [ -z "$$INTEGRATION_TEST" ]; then $(MAKE) unit; else $(MAKE) integration; fi
+.PHONY: test-ci

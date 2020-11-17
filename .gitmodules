@@ -1,3 +1,3 @@
 [submodule "thumbor"]
 	path = thumbor
-	url = git@github.com:thumbor/thumbor.git
+	url = https://github.com/thumbor/thumbor.git
