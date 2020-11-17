@@ -130,6 +130,7 @@ class ImageMagickEngineTransformationsTestCase(TestCase):
     def setUp(self):
         self.engine = Engine({})
         self.engine.image = Mock()
+
     def test_flip_vertically(self):
         self.engine.flip_vertically()
         self.engine.image.flip.assert_called_once_with()
