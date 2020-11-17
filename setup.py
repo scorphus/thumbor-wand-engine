@@ -7,6 +7,7 @@ from setuptools import setup
 
 tests_require = [
     "black",
+    "colorama",
     "flake8",
     "isort",
     "pytest",
