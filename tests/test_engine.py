@@ -8,7 +8,7 @@ from thumbor.engines.pil import Engine as PileEngine
 from unittest import TestCase
 
 
-STORAGE_PATH = abspath(join(dirname(__file__), "./fixtures/images/"))
+STORAGE_PATH = abspath(join(dirname(__file__), "../thumbor_tests/fixtures/images/"))
 
 
 class ImageMagickEngineTestCase(TestCase):
