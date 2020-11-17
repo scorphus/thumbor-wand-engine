@@ -125,26 +125,23 @@ class ImageMagickEngineTestCase(TestCase):
         assert data_before[:100] == data_after[:100]
         assert data_before[-100:] == data_after[-100:]
 
+
+class ImageMagickEngineTransformationsTestCase(TestCase):
+    def setUp(self):
+        self.engine = Engine({})
+        self.engine.image = Mock()
     def test_flip_vertically(self):
-        engine = Engine({})
-        engine.image = Mock()
-        engine.flip_vertically()
-        engine.image.flip.assert_called_once_with()
+        self.engine.flip_vertically()
+        self.engine.image.flip.assert_called_once_with()
 
     def test_flip_horizontally(self):
-        engine = Engine({})
-        engine.image = Mock()
-        engine.flip_horizontally()
-        engine.image.flop.assert_called_once_with()
+        self.engine.flip_horizontally()
+        self.engine.image.flop.assert_called_once_with()
 
     def test_crop(self):
-        engine = Engine({})
-        engine.image = Mock()
-        engine.crop(1.0, 2.0, 3.0, 4.0)
-        engine.image.crop.assert_called_once_with(left=1, top=2, right=3, bottom=4)
+        self.engine.crop(1.0, 2.0, 3.0, 4.0)
+        self.engine.image.crop.assert_called_once_with(left=1, top=2, right=3, bottom=4)
 
     def test_resize(self):
-        engine = Engine({})
-        engine.image = Mock()
-        engine.resize(1.0, 2.0)
-        engine.image.resize.assert_called_once_with(1, 2)
+        self.engine.resize(1.0, 2.0)
+        self.engine.image.resize.assert_called_once_with(1, 2)
