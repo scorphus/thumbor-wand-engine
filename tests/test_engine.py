@@ -6,6 +6,7 @@ from thumbor.config import Config
 from thumbor.context import Context
 from thumbor.engines.pil import Engine as PileEngine
 from unittest import TestCase
+from unittest.mock import Mock
 
 
 STORAGE_PATH = abspath(join(dirname(__file__), "../thumbor_tests/fixtures/images/"))
@@ -123,3 +124,25 @@ class ImageMagickEngineTestCase(TestCase):
         assert len(data_before) == len(data_after)
         assert data_before[:100] == data_after[:100]
         assert data_before[-100:] == data_after[-100:]
+
+
+class ImageMagickEngineTransformationsTestCase(TestCase):
+    def setUp(self):
+        self.engine = Engine({})
+        self.engine.image = Mock()
+
+    def test_flip_vertically(self):
+        self.engine.flip_vertically()
+        self.engine.image.flip.assert_called_once_with()
+
+    def test_flip_horizontally(self):
+        self.engine.flip_horizontally()
+        self.engine.image.flop.assert_called_once_with()
+
+    def test_crop(self):
+        self.engine.crop(1.0, 2.0, 3.0, 4.0)
+        self.engine.image.crop.assert_called_once_with(left=1, top=2, right=3, bottom=4)
+
+    def test_resize(self):
+        self.engine.resize(1.0, 2.0)
+        self.engine.image.resize.assert_called_once_with(1, 2)
