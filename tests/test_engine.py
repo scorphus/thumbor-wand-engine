@@ -1,10 +1,10 @@
+from imagemagick_engine.engine import Engine
 from os.path import abspath
 from os.path import dirname
 from os.path import join
 from thumbor.config import Config
 from thumbor.context import Context
 from thumbor.engines.pil import Engine as PileEngine
-from imagemagick_engine.engine import Engine
 from unittest import TestCase
 
 

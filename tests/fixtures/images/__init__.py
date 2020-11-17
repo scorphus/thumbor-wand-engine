@@ -8,8 +8,11 @@
 # http://www.opensource.org/licenses/mit-license
 # Copyright (c) 2011 globo.com thumbor@googlegroups.com
 
+from os.path import abspath
+from os.path import dirname
+from os.path import join
+
 import unicodedata
-from os.path import abspath, dirname, join
 
 
 ##
