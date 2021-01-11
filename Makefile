@@ -11,13 +11,13 @@ setup:
 	@pre-commit install -f --hook-type pre-commit
 	@pre-commit install -f --hook-type pre-push
 	@git submodule update --init --recursive
-	@PIP_REQUIRE_VIRTUALENV=true pip install -U -e thumbor
+	@PIP_REQUIRE_VIRTUALENV=true pip install -U -e thumbor[tests]
 .PHONY: setup
 
 # install dependencies
 setup-ci:
 	@pip install -U -e .[tests]
-	@pip install -U -e thumbor
+	@pip install -U -e thumbor[tests]
 .PHONY: setup-ci
 
 # run isort, black and flake8 for style guide enforcement

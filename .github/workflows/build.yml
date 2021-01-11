@@ -42,6 +42,24 @@ jobs:
             ${{ runner.os }}-pip-${{ matrix.python.version }}-
             ${{ runner.os }}-pip-
             ${{ runner.os }}-
+      - name: Install dependencies
+        if: matrix.python.test != 'LINT_TEST'
+        run: | # NOTE: please keep the list of packages ordered
+          sudo apt update
+          sudo apt install \
+            ffmpeg \
+            gifsicle \
+            libboost-python-dev \
+            libcurl4-openssl-dev \
+            libexiv2-dev \
+            libgnutls28-dev \
+            libimage-exiftool-perl \
+            libjpeg-progs \
+            libssl-dev \
+            libwebp-dev \
+            python-all-dev \
+            scons \
+            webp
       - name: Upgrade pip, run make setup, and upgrade test tools
         if: matrix.python.test != 'LINT_TEST'
         run: |
