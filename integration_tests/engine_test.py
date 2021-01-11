@@ -8,7 +8,7 @@ from tornado.testing import gen_test
 class EngineTest(EngineCase):
     engine = "imagemagick_engine"
 
-    @gen_test
+    @gen_test(timeout=60)
     async def test_single_params(self):
         if not self._app:
             return True
