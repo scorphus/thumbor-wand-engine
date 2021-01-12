@@ -15,7 +15,7 @@ tests_require = [
 ]
 
 setup(
-    name="imagemagick engine",
+    name="imagemagick_engine",
     version="0.0.1",
     description="ImageMagick imaging engine for Thumbor.",
     long_description="""
