@@ -12,6 +12,7 @@ tests_require = [
     "isort",
     "pytest",
     "pytest-cov",
+    "pytest-mock",
 ]
 
 setup(

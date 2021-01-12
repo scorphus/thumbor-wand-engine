@@ -11,16 +11,22 @@ jobs:
             test: INTEGRATION_TEST
           - version: 3.6
             test: UNIT_TEST
+          - version: 3.6
+            test: ACCEPTANCE_TEST
           - version: 3.7
             test: INTEGRATION_TEST
           - version: 3.7
             test: UNIT_TEST
+          - version: 3.7
+            test: ACCEPTANCE_TEST
           - version: 3.8
             test: LINT_TEST
           - version: 3.8
             test: INTEGRATION_TEST
           - version: 3.8
             test: UNIT_TEST
+          - version: 3.8
+            test: ACCEPTANCE_TEST
     steps:
       - uses: actions/checkout@v2
       - name: Checkout submodules
@@ -73,6 +79,11 @@ jobs:
           pip install --upgrade black flake8 isort
       - name: Set environment variables for next action
         run: echo "${{ matrix.python.test }}=1" >> $GITHUB_ENV
+      - name: Compile Thumbor extensions
+        if: matrix.python.test == 'ACCEPTANCE_TEST'
+        run: |
+          sudo chmod -R a+w thumbor/thumbor/ext/filters
+          make compile_ext
       - name: Run ${{ matrix.python.test }}
         run: make test-ci
       - name: Send coverage stats to Codecov

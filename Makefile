@@ -47,6 +47,10 @@ pyclean:
 	@find . -type f -name "*.pyc" -delete -print
 .PHONY: pyclean
 
+compile_ext:
+	@cd thumbor && python setup.py build_ext -i
+.PHONY: compile_ext
+
 unit:
 	@pytest -sv --cov=imagemagick_engine tests/
 .PHONY: unit
@@ -54,6 +58,10 @@ unit:
 integration:
 	@pytest -sv --cov=imagemagick_engine integration_tests/
 .PHONY: integration
+
+acceptance:
+	@env ENGINE=imagemagick_engine pytest -sv --cov=imagemagick_engine thumbor/tests/filters/
+.PHONY: acceptance
 
 coverage-html:
 	@coverage html
@@ -63,5 +71,13 @@ test: unit
 .PHONY: test
 
 test-ci:
-	@if [ "$$LINT_TEST" ]; then $(MAKE) lint; elif [ -z "$$INTEGRATION_TEST" ]; then $(MAKE) unit; else $(MAKE) integration; fi
+	@if [ "$$LINT_TEST" ]; then \
+		$(MAKE) lint; \
+	elif [ -n "$$UNIT_TEST" ]; then \
+		$(MAKE) unit; \
+	elif [ -n "$$INTEGRATION_TEST" ]; then \
+		$(MAKE) integration; \
+	else \
+		$(MAKE) acceptance; \
+	fi
 .PHONY: test-ci
