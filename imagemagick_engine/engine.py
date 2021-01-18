@@ -122,3 +122,6 @@ class Engine(BaseEngine):
         if update_image:
             self.image = image
         return image
+
+    def rotate(self, degrees):
+        self.image.rotate(degrees)

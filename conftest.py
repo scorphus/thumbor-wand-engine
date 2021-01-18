@@ -49,7 +49,7 @@ def get_ssim(actual, expected):
     # TODO: change from "mean_squared" to "structural_similarity"
     # Check https://docs.wand-py.org/en/latest/wand/image.html#wand.image.COMPARE_METRICS
     _, metric = actual.compare(expected, "mean_squared")
-    return round(1 - metric, 5)
+    return round(1 - metric, 4)
 
 
 @pytest.fixture(autouse=True)
