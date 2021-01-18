@@ -104,7 +104,7 @@ class Engine(BaseEngine):
         self.image.alpha_channel = True
         other_engine.image.alpha_channel = True
 
-        operator = "over" if merge else "blend"
+        operator = "over" if merge else "atop"
         self.image.composite(other_engine.image, pos[0], pos[1], operator)
 
     def enable_alpha(self):
