@@ -6,50 +6,39 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python:
-          - version: 3.6
-            test: INTEGRATION_TEST
-          - version: 3.6
-            test: UNIT_TEST
-          - version: 3.6
-            test: ACCEPTANCE_TEST
-          - version: 3.7
-            test: INTEGRATION_TEST
-          - version: 3.7
-            test: UNIT_TEST
-          - version: 3.7
-            test: ACCEPTANCE_TEST
-          - version: 3.8
-            test: LINT_TEST
-          - version: 3.8
-            test: INTEGRATION_TEST
-          - version: 3.8
-            test: UNIT_TEST
-          - version: 3.8
-            test: ACCEPTANCE_TEST
+        python-version:
+          - 3.6
+          - 3.7
+          - 3.8
+          - 3.9
+        test-kind:
+          - ACCEPTANCE_TEST
+          - INTEGRATION_TEST
+          - LINT_TEST
+          - UNIT_TEST
     steps:
       - uses: actions/checkout@v2
       - name: Checkout submodules
         uses: textbook/git-checkout-submodule-action@2.1.1
-      - name: Set up Python ${{ matrix.python.version }}
+      - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
         with:
-          python-version: ${{ matrix.python.version }}
+          python-version: ${{ matrix.python-version }}
       - name: Cache pip dependencies
-        if: matrix.python.test != 'LINT_TEST'
+        if: matrix.test-kind != 'LINT_TEST'
         uses: actions/cache@v2
         id: deps_cache
         with:
           path: |
             ${{ env.pythonLocation }}/lib/*/site-packages/*
             ${{ env.pythonLocation }}/bin/*
-          key: ${{ runner.os }}-pip-${{ matrix.python.version }}-${{ hashFiles('setup.py') }}
+          key: ${{ runner.os }}-pip-${{ matrix.python-version }}-${{ hashFiles('setup.py') }}
           restore-keys: |
-            ${{ runner.os }}-pip-${{ matrix.python.version }}-
+            ${{ runner.os }}-pip-${{ matrix.python-version }}-
             ${{ runner.os }}-pip-
             ${{ runner.os }}-
       - name: Install dependencies
-        if: matrix.python.test != 'LINT_TEST'
+        if: matrix.test-kind != 'LINT_TEST'
         run: | # NOTE: please keep the list of packages ordered
           sudo apt update
           sudo apt install \
@@ -67,25 +56,25 @@ jobs:
             scons \
             webp
       - name: Upgrade pip, run make setup, and upgrade test tools
-        if: matrix.python.test != 'LINT_TEST'
+        if: matrix.test-kind != 'LINT_TEST'
         run: |
           pip install --upgrade pip
           make setup-ci
           pip install --upgrade coveralls pytest pytest-cov
       - name: Install linters
-        if: matrix.python.test == 'LINT_TEST'
+        if: matrix.test-kind == 'LINT_TEST'
         run: |
           pip install --upgrade pip
           pip install --upgrade black flake8 isort
       - name: Set environment variables for next action
-        run: echo "${{ matrix.python.test }}=1" >> $GITHUB_ENV
+        run: echo "${{ matrix.test-kind }}=1" >> $GITHUB_ENV
       - name: Compile Thumbor extensions
-        if: matrix.python.test == 'ACCEPTANCE_TEST'
+        if: matrix.test-kind == 'ACCEPTANCE_TEST'
         run: |
           sudo chmod -R a+w thumbor/thumbor/ext/filters
           make compile_ext
-      - name: Run ${{ matrix.python.test }}
+      - name: Run ${{ matrix.test-kind }}
         run: make test-ci
       - name: Send coverage stats to Codecov
-        if: matrix.python.test == 'UNIT_TEST'
+        if: matrix.test-kind == 'UNIT_TEST'
         run: bash <(curl -s https://codecov.io/bash) -f target/debug/lcov.info
