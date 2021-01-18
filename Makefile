@@ -48,7 +48,7 @@ pyclean:
 .PHONY: pyclean
 
 compile_ext:
-	@cd thumbor && python setup.py build_ext -i
+	@cd thumbor && $(MAKE) compile_ext
 .PHONY: compile_ext
 
 unit:
@@ -78,6 +78,6 @@ test-ci:
 	elif [ -n "$$INTEGRATION_TEST" ]; then \
 		$(MAKE) integration; \
 	else \
-		$(MAKE) acceptance; \
+		$(MAKE) compile_ext acceptance; \
 	fi
 .PHONY: test-ci

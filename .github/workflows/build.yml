@@ -68,11 +68,9 @@ jobs:
           pip install --upgrade black flake8 isort
       - name: Set environment variables for next action
         run: echo "${{ matrix.test-kind }}=1" >> $GITHUB_ENV
-      - name: Compile Thumbor extensions
+      - name: Set ext/filters directory writeable
         if: matrix.test-kind == 'ACCEPTANCE_TEST'
-        run: |
-          sudo chmod -R a+w thumbor/thumbor/ext/filters
-          make compile_ext
+        run: sudo chmod -R a+w thumbor/thumbor/ext/filters
       - name: Run ${{ matrix.test-kind }}
         run: make test-ci
       - name: Send coverage stats to Codecov
