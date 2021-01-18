@@ -60,7 +60,11 @@ integration:
 .PHONY: integration
 
 acceptance:
-	@env ENGINE=imagemagick_engine pytest -sv --cov=imagemagick_engine thumbor/tests/filters/
+	@env ENGINE=imagemagick_engine pytest -sv \
+		--cov=imagemagick_engine thumbor_tests/filters/ \
+		--ignore-glob=*test_autojpg.py \
+		--ignore-glob=*test_format.py \
+		--ignore-glob=*test_max_age.py
 .PHONY: acceptance
 
 coverage-html:
