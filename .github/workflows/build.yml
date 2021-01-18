@@ -66,13 +66,11 @@ jobs:
         run: |
           pip install --upgrade pip
           pip install --upgrade black flake8 isort
-      - name: Set environment variables for next action
-        run: echo "${{ matrix.test-kind }}=1" >> $GITHUB_ENV
       - name: Set ext/filters directory writeable
         if: matrix.test-kind == 'ACCEPTANCE_TEST'
         run: sudo chmod -R a+w thumbor/thumbor/ext/filters
       - name: Run ${{ matrix.test-kind }}
-        run: make test-ci
+        run: ${{ matrix.test-kind }}=1 make test-ci
       - name: Send coverage stats to Codecov
         if: matrix.test-kind == 'UNIT_TEST'
         run: bash <(curl -s https://codecov.io/bash) -f target/debug/lcov.info
