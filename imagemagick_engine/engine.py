@@ -115,7 +115,7 @@ class Engine(BaseEngine):
 
     def convert_to_grayscale(self, update_image=True, alpha=True):
         image = self.image.clone()
-        if "alpha" in self.image.type:
+        if "alpha" in self.image.type or "matte" in self.image.type:
             image.type = GRAYSCALEALPHA_TYPE
         else:
             image.type = GRAYSCALE_TYPE

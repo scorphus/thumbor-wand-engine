@@ -1,4 +1,6 @@
 from imagemagick_engine.engine import Engine
+from imagemagick_engine.engine import GRAYSCALE_TYPE
+from imagemagick_engine.engine import GRAYSCALEALPHA_TYPE
 from os.path import abspath
 from os.path import dirname
 from os.path import join
@@ -140,6 +142,36 @@ class ImageMagickEngineTestCase(TestCase):
         engine = Engine(self.context)
         engine.image = Mock(type=image_type)
         assert engine.get_image_mode() == expected_mode
+
+    @parameterized.expand(
+        [
+            ["grayscale", GRAYSCALE_TYPE],
+            ["grayscalematte", GRAYSCALEALPHA_TYPE],
+            ["grayscalealpha", GRAYSCALEALPHA_TYPE],
+            ["truecolor", GRAYSCALE_TYPE],
+            ["truecolormatte", GRAYSCALEALPHA_TYPE],
+            ["truecoloralpha", GRAYSCALEALPHA_TYPE],
+        ],
+    )
+    def test_convert_to_grayscale(self, image_type, expected_mode):
+        engine = Engine(self.context)
+        engine.image = Mock(type=image_type)
+        image = engine.convert_to_grayscale()
+        assert engine.image.type == image.type == expected_mode
+
+    @parameterized.expand(
+        [
+            ["truecolor", GRAYSCALE_TYPE],
+            ["truecolormatte", GRAYSCALEALPHA_TYPE],
+            ["truecoloralpha", GRAYSCALEALPHA_TYPE],
+        ],
+    )
+    def test_convert_to_grayscale_update_image_false(self, image_type, expected_mode):
+        engine = Engine(self.context)
+        engine.image = Mock(type=image_type)
+        image = engine.convert_to_grayscale(update_image=False)
+        assert engine.image.type != expected_mode
+        assert image.type == expected_mode
 
 
 class ImageMagickEngineTransformationsTestCase(TestCase):
