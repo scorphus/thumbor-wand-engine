@@ -10,6 +10,7 @@ tests_require = [
     "colorama",
     "flake8",
     "isort",
+    "parameterized",
     "pytest",
     "pytest-cov",
     "pytest-mock",

@@ -2,6 +2,7 @@ from imagemagick_engine.engine import Engine
 from os.path import abspath
 from os.path import dirname
 from os.path import join
+from parameterized import parameterized
 from thumbor.config import Config
 from thumbor.context import Context
 from thumbor.engines.pil import Engine as PileEngine
@@ -124,6 +125,21 @@ class ImageMagickEngineTestCase(TestCase):
         assert len(data_before) == len(data_after)
         assert data_before[:100] == data_after[:100]
         assert data_before[-100:] == data_after[-100:]
+
+    @parameterized.expand(
+        [
+            ["grayscale", "RGB"],
+            ["grayscalematte", "RGBA"],
+            ["grayscalealpha", "RGBA"],
+            ["truecolor", "RGB"],
+            ["truecolormatte", "RGBA"],
+            ["truecoloralpha", "RGBA"],
+        ],
+    )
+    def test_get_image_mode(self, image_type, expected_mode):
+        engine = Engine(self.context)
+        engine.image = Mock(type=image_type)
+        assert engine.get_image_mode() == expected_mode
 
 
 class ImageMagickEngineTransformationsTestCase(TestCase):

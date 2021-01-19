@@ -77,7 +77,7 @@ class Engine(BaseEngine):
 
     @deprecated("Use image_data_as_rgb instead.")
     def get_image_mode(self):
-        if "alpha" in self.image.type:
+        if "alpha" in self.image.type or "matte" in self.image.type:
             return "RGBA"
         return "RGB"
 
