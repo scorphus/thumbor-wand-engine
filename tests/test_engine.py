@@ -173,6 +173,13 @@ class ImageMagickEngineTestCase(TestCase):
         assert engine.image.type != expected_mode
         assert image.type == expected_mode
 
+    @parameterized.expand(["truecolor", "truecolormatte", "truecoloralpha"])
+    def test_convert_to_grayscale_alpha_false(self, image_type):
+        engine = Engine(self.context)
+        engine.image = Mock(type=image_type)
+        image = engine.convert_to_grayscale(alpha=False)
+        assert engine.image.type == image.type == GRAYSCALE_TYPE
+
 
 class ImageMagickEngineTransformationsTestCase(TestCase):
     def setUp(self):
