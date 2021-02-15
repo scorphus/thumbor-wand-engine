@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# thumbor imaging service - graphicsmagick engine
-# https://github.com/thumbor/graphicsmagick-engine
+# This file is part of thumbor-imagemagick-engine
+# https://github.com/scorphus/thumbor-imagemagick-engine
 
 # Licensed under the MIT license:
 # http://www.opensource.org/licenses/mit-license
-# Copyright (c) 2014 globo.com timehome@corp.globo.com
+# Copyright (c) 2020-2021, Pablo S. Blum de Aguiar <scorphus@gmail.com>
 
 from thumbor.engines import BaseEngine
 from thumbor.utils import deprecated
