@@ -8,11 +8,4 @@
 # http://www.opensource.org/licenses/mit-license
 # Copyright (c) 2020-2021, Pablo S. Blum de Aguiar <scorphus@gmail.com>
 
-import logging
-
-try:
-    from imagemagick_engine.engine import Engine  # NOQA
-except ImportError:
-    logging.warning(
-        "Could not import imagemagick_engine. Probably due to setup.py installing it."
-    )
+from .engine import Engine  # NOQA
