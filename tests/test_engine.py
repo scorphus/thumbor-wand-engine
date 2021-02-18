@@ -35,7 +35,6 @@ class ImageMagickEngineTestCase(TestCase):
         cfg.LOADER = "thumbor.loaders.file_loader"
         cfg.FILE_LOADER_ROOT_PATH = STORAGE_PATH
         cfg.STORAGE = "thumbor.storages.no_storage"
-
         return Context(config=cfg)
 
     def setUp(self):
@@ -60,7 +59,6 @@ class ImageMagickEngineTestCase(TestCase):
             buffer = image_file.read()
         assert buffer is not None
         engine.load(buffer, None)
-
         assert engine.image.format == "TIFF"
         assert engine.image.size == (100, 100)
 
@@ -70,7 +68,6 @@ class ImageMagickEngineTestCase(TestCase):
             buffer = image_file.read()
         assert buffer is not None
         engine.load(buffer, None)
-
         assert engine.image.format == "TIFF"
         assert engine.image.size == (100, 100)
 
@@ -79,12 +76,9 @@ class ImageMagickEngineTestCase(TestCase):
         with open(join(STORAGE_PATH, "image.jpg"), "rb") as image_file:
             buffer = image_file.read()
         assert buffer is not None
-
         engine.load(buffer, None)
-
         _, data = engine.image_data_as_rgb()
         engine.set_image_data(data)
-
         assert engine.image.format == "JPEG"
         assert engine.image.size == (300, 400)
 
@@ -93,12 +87,9 @@ class ImageMagickEngineTestCase(TestCase):
         with open(join(STORAGE_PATH, "1bit.png"), "rb") as image_file:
             buffer = image_file.read()
         assert buffer is not None
-
         engine.load(buffer, None)
-
         _, data = engine.image_data_as_rgb()
         engine.set_image_data(data)
-
         assert engine.image.format == "PNG"
         assert engine.image.size == (691, 212)
 
@@ -108,13 +99,10 @@ class ImageMagickEngineTestCase(TestCase):
         with open(join(STORAGE_PATH, "1bit.png"), "rb") as image_file:
             buffer = image_file.read()
         assert buffer is not None
-
         engine.load(buffer, ".png")
         pil_engine.load(buffer, ".png")
-
         pil_mode, pil_data = pil_engine.image_data_as_rgb()
         mode, data = engine.image_data_as_rgb()
-
         assert mode == pil_mode
         assert len(data) == len(pil_data)
         assert data[:100] == pil_data[:100]
@@ -125,15 +113,10 @@ class ImageMagickEngineTestCase(TestCase):
         with open(join(STORAGE_PATH, "1bit.png"), "rb") as image_file:
             buffer = image_file.read()
         assert buffer is not None
-
         engine.load(buffer, ".png")
-
         _, data_before = engine.image_data_as_rgb()
-
         engine.set_image_data(data_before)
-
         _, data_after = engine.image_data_as_rgb()
-
         assert len(data_before) == len(data_after)
         assert data_before[:100] == data_after[:100]
         assert data_before[-100:] == data_after[-100:]

@@ -28,7 +28,6 @@ async def get_filtered(
 ):
     fltr = self.get_filter(filter_name, params_string, config_context)
     image = Image(filename=self.get_fixture_path(source_image))
-
     # Special case for the quality test, because the quality filter
     # doesn't really affect the image, it only sets a context value
     # for use on save. But here we convert the result,
@@ -39,13 +38,9 @@ async def get_filtered(
     else:
         img_buffer = image.make_blob()
         fltr.engine.load(img_buffer, ".png")
-
     fltr.context.transformer.img_operation_worker()
-
     await fltr.run()
-
     fltr.engine.image = fltr.engine.image.convert(mode)
-
     return fltr.engine.image
 
 
