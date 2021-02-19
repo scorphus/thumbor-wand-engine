@@ -1,16 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# This file is part of thumbor-imagemagick-engine
-# https://github.com/scorphus/thumbor-imagemagick-engine
+# This file is part of thumbor-wand-engine
+# https://github.com/scorphus/thumbor-wand-engine
 
 # Licensed under the MIT license:
 # http://www.opensource.org/licenses/mit-license
 # Copyright (c) 2020-2021, Pablo S. Blum de Aguiar <scorphus@gmail.com>
 
-from imagemagick_engine.engine import Engine
-from imagemagick_engine.engine import GRAYSCALE_TYPE
-from imagemagick_engine.engine import GRAYSCALEALPHA_TYPE
 from os.path import abspath
 from os.path import dirname
 from os.path import join
@@ -18,6 +15,9 @@ from parameterized import parameterized
 from thumbor.config import Config
 from thumbor.context import Context
 from thumbor.engines.pil import Engine as PileEngine
+from thumbor_wand_engine.engine import Engine
+from thumbor_wand_engine.engine import GRAYSCALE_TYPE
+from thumbor_wand_engine.engine import GRAYSCALEALPHA_TYPE
 from unittest import TestCase
 from unittest.mock import Mock
 
@@ -25,11 +25,11 @@ from unittest.mock import Mock
 STORAGE_PATH = abspath(join(dirname(__file__), "../thumbor_tests/fixtures/images/"))
 
 
-class ImageMagickEngineTestCase(TestCase):
+class WandEngineTestCase(TestCase):
     def get_context(self):
         cfg = Config(
             SECURITY_KEY="ACME-SEC",
-            ENGINE="thumbor.engines.wand",
+            ENGINE="thumbor_wand_engine",
             IMAGE_METADATA_READ_FORMATS="exif,xmp",
         )
         cfg.LOADER = "thumbor.loaders.file_loader"
@@ -174,7 +174,7 @@ class ImageMagickEngineTestCase(TestCase):
         assert engine.image.type == image.type == GRAYSCALE_TYPE
 
 
-class ImageMagickEngineTransformationsTestCase(TestCase):
+class WandEngineTransformationsTestCase(TestCase):
     def setUp(self):
         self.engine = Engine({})
         self.engine.image = Mock()

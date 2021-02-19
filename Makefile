@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-# This file is part of thumbor-imagemagick-engine
-# https://github.com/scorphus/thumbor-imagemagick-engine
+# This file is part of thumbor-wand-engine
+# https://github.com/scorphus/thumbor-wand-engine
 
 # Licensed under the MIT license:
 # http://www.opensource.org/licenses/mit-license
@@ -61,16 +61,16 @@ compile_ext:
 .PHONY: compile_ext
 
 unit:
-	@pytest -sv --cov=imagemagick_engine tests/
+	@pytest -sv --cov=thumbor_wand_engine tests/
 .PHONY: unit
 
 integration:
-	@pytest -sv --cov=imagemagick_engine integration_tests/
+	@pytest -sv --cov=thumbor_wand_engine integration_tests/
 .PHONY: integration
 
 acceptance:
-	@env ENGINE=imagemagick_engine pytest -sv \
-		--cov=imagemagick_engine thumbor_tests/filters/ \
+	@env ENGINE=thumbor_wand_engine pytest -sv \
+		--cov=thumbor_wand_engine thumbor_tests/filters/ \
 		--ignore-glob=*test_autojpg.py \
 		--ignore-glob=*test_format.py \
 		--ignore-glob=*test_max_age.py

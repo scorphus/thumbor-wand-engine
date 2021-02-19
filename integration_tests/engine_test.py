@@ -6,7 +6,7 @@ from tornado.testing import gen_test
 
 
 class EngineTest(EngineCase):
-    engine = "imagemagick_engine"
+    engine = "thumbor_wand_engine"
 
     @gen_test(timeout=60)
     async def test_single_params(self):

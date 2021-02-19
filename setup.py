@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# This file is part of thumbor-imagemagick-engine
-# https://github.com/scorphus/thumbor-imagemagick-engine
+# This file is part of thumbor-wand-engine
+# https://github.com/scorphus/thumbor-wand-engine
 
 # Licensed under the MIT license:
 # http://www.opensource.org/licenses/mit-license
@@ -24,16 +24,16 @@ tests_require = [
 ]
 
 setup(
-    name="imagemagick_engine",
+    name="thumbor_wand_engine",
     version="0.0.1",
     description="ImageMagick imaging engine for Thumbor.",
     long_description="""
 ImageMagick imaging engine for Thumbor.
 """,
-    keywords="thumbor imaging imagemagick",
-    author="https://github.com/scorphus",
+    keywords="thumbor imaging imagemagick magickwand magick wand",
+    author="Pablo S. Blum de Aguiar",
     author_email="scorphus@gmail.com",
-    url="",
+    url="https://github.com/scorphus/thumbor-wand-engine",
     license="MIT",
     classifiers=[],
     packages=find_packages(),
