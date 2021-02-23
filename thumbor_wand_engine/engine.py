@@ -17,28 +17,8 @@ from wand.image import IMAGE_TYPES
 
 GRAYSCALE_TYPE = IMAGE_TYPES[2]
 GRAYSCALEALPHA_TYPE = IMAGE_TYPES[3]
-PALETTE_TYPE = IMAGE_TYPES[4]
 PALETTEALPHA_TYPE = IMAGE_TYPES[5]
-TRUECOLOR_TYPE = IMAGE_TYPES[6]
 TRUECOLORALPHA_TYPE = IMAGE_TYPES[7]
-
-MODES = {
-    GRAYSCALE_TYPE: "L",
-    GRAYSCALEALPHA_TYPE: "L",  # FIXME: review
-    PALETTE_TYPE: "P",
-    PALETTEALPHA_TYPE: "P",  # FIXME: review
-    TRUECOLOR_TYPE: "RGB",
-    TRUECOLORALPHA_TYPE: "RGBA",
-}
-
-# fmt: off
-FORMATS = {
-    '.jpg': 'JPEG',
-    '.jpeg': 'JPEG',
-    '.gif': 'GIF',
-    '.png': 'PNG',
-}
-# fmt: on
 
 
 class Engine(BaseEngine):
