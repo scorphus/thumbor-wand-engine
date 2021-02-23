@@ -57,7 +57,7 @@ class Engine(BaseEngine):
 
     @deprecated("Use image_data_as_rgb instead.")
     def get_image_mode(self):
-        if "alpha" in self.image.type or "matte" in self.image.type:
+        if self._is_image_type_alpha():
             return "RGBA"
         return "RGB"
 
@@ -88,14 +88,14 @@ class Engine(BaseEngine):
         self.image.composite(other_engine.image, pos[0], pos[1], operator)
 
     def enable_alpha(self):
-        if "grayscale" in self.image.type:
+        if self._is_image_type_grayscale():
             self.image.type = GRAYSCALEALPHA_TYPE
         else:
             self.image.type = TRUECOLORALPHA_TYPE
 
     def convert_to_grayscale(self, update_image=True, alpha=True):
         image = self.image.clone()
-        if alpha and ("alpha" in self.image.type or "matte" in self.image.type):
+        if alpha and self._is_image_type_alpha():
             image.type = GRAYSCALEALPHA_TYPE
         else:
             image.type = GRAYSCALE_TYPE
@@ -105,3 +105,9 @@ class Engine(BaseEngine):
 
     def rotate(self, degrees):
         self.image.rotate(degrees)
+
+    def _is_image_type_alpha(self):
+        return "alpha" in self.image.type or "matte" in self.image.type
+
+    def _is_image_type_grayscale(self):
+        return "grayscale" in self.image.type
