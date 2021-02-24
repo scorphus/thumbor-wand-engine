@@ -15,10 +15,20 @@ from wand.image import Image
 from wand.image import IMAGE_TYPES
 
 
-GRAYSCALE_TYPE = IMAGE_TYPES[2]
-GRAYSCALEALPHA_TYPE = IMAGE_TYPES[3]
-PALETTEALPHA_TYPE = IMAGE_TYPES[5]
-TRUECOLORALPHA_TYPE = IMAGE_TYPES[7]
+(
+    UNDEFINED_TYPE,
+    BILEVEL_TYPE,
+    GRAYSCALE_TYPE,
+    GRAYSCALEALPHA_TYPE,
+    PALETTE_TYPE,
+    PALETTEALPHA_TYPE,
+    TRUECOLOR_TYPE,
+    TRUECOLORALPHA_TYPE,
+    COLORSEPARATION_TYPE,
+    COLORSEPARATIONALPHA_TYPE,
+    OPTIMIZE_TYPE,
+    PALETTEBILEVELALPHA_TYPE,
+) = IMAGE_TYPES
 
 
 class Engine(BaseEngine):
@@ -107,4 +117,10 @@ class Engine(BaseEngine):
         self.image.rotate(degrees)
 
     def _is_image_type_alpha(self):
-        return "alpha" in self.image.type or "matte" in self.image.type
+        return self.image.type in (
+            GRAYSCALEALPHA_TYPE,
+            PALETTEALPHA_TYPE,
+            TRUECOLORALPHA_TYPE,
+            COLORSEPARATIONALPHA_TYPE,
+            PALETTEBILEVELALPHA_TYPE,
+        )

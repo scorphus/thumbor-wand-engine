@@ -138,12 +138,18 @@ class WandEngineTestCase(TestCase):
 
     @parameterized.expand(
         [
-            ["grayscale", "RGB"],
-            ["grayscalematte", "RGBA"],
-            ["grayscalealpha", "RGBA"],
-            ["truecolor", "RGB"],
-            ["truecolormatte", "RGBA"],
-            ["truecoloralpha", "RGBA"],
+            (UNDEFINED_TYPE, "RGB"),
+            (BILEVEL_TYPE, "RGB"),
+            (GRAYSCALE_TYPE, "RGB"),
+            (GRAYSCALEALPHA_TYPE, "RGBA"),
+            (PALETTE_TYPE, "RGB"),
+            (PALETTEALPHA_TYPE, "RGBA"),
+            (TRUECOLOR_TYPE, "RGB"),
+            (TRUECOLORALPHA_TYPE, "RGBA"),
+            (COLORSEPARATION_TYPE, "RGB"),
+            (COLORSEPARATIONALPHA_TYPE, "RGBA"),
+            (OPTIMIZE_TYPE, "RGB"),
+            (PALETTEBILEVELALPHA_TYPE, "RGBA"),
         ],
     )
     def test_get_image_mode(self, image_type, expected_mode):
@@ -153,35 +159,35 @@ class WandEngineTestCase(TestCase):
 
     @parameterized.expand(
         [
-            ["grayscale", GRAYSCALE_TYPE],
-            ["grayscalematte", GRAYSCALEALPHA_TYPE],
-            ["grayscalealpha", GRAYSCALEALPHA_TYPE],
-            ["truecolor", GRAYSCALE_TYPE],
-            ["truecolormatte", GRAYSCALEALPHA_TYPE],
-            ["truecoloralpha", GRAYSCALEALPHA_TYPE],
+            (UNDEFINED_TYPE, GRAYSCALE_TYPE),
+            (BILEVEL_TYPE, GRAYSCALE_TYPE),
+            (GRAYSCALE_TYPE, GRAYSCALE_TYPE),
+            (GRAYSCALEALPHA_TYPE, GRAYSCALEALPHA_TYPE),
+            (PALETTE_TYPE, GRAYSCALE_TYPE),
+            (PALETTEALPHA_TYPE, GRAYSCALEALPHA_TYPE),
+            (TRUECOLOR_TYPE, GRAYSCALE_TYPE),
+            (TRUECOLORALPHA_TYPE, GRAYSCALEALPHA_TYPE),
+            (COLORSEPARATION_TYPE, GRAYSCALE_TYPE),
+            (COLORSEPARATIONALPHA_TYPE, GRAYSCALEALPHA_TYPE),
+            (OPTIMIZE_TYPE, GRAYSCALE_TYPE),
+            (PALETTEBILEVELALPHA_TYPE, GRAYSCALEALPHA_TYPE),
         ],
     )
-    def test_convert_to_grayscale(self, image_type, expected_mode):
+    def test_convert_to_grayscale(self, image_type, expected_type):
         engine = Engine(self.context)
         engine.image = Mock(type=image_type)
         image = engine.convert_to_grayscale()
-        assert engine.image.type == image.type == expected_mode
+        assert engine.image.type == image.type == expected_type
 
-    @parameterized.expand(
-        [
-            ["truecolor", GRAYSCALE_TYPE],
-            ["truecolormatte", GRAYSCALEALPHA_TYPE],
-            ["truecoloralpha", GRAYSCALEALPHA_TYPE],
-        ],
-    )
-    def test_convert_to_grayscale_update_image_false(self, image_type, expected_mode):
+    def test_convert_to_grayscale_update_image_false(self):
+        image_type, expected_type = TRUECOLOR_TYPE, GRAYSCALE_TYPE
         engine = Engine(self.context)
         engine.image = Mock(type=image_type)
         image = engine.convert_to_grayscale(update_image=False)
-        assert engine.image.type != expected_mode
-        assert image.type == expected_mode
+        assert image.type == expected_type
+        assert engine.image.type != expected_type
 
-    @parameterized.expand(["truecolor", "truecolormatte", "truecoloralpha"])
+    @parameterized.expand(IMAGE_TYPES)
     def test_convert_to_grayscale_alpha_false(self, image_type):
         engine = Engine(self.context)
         engine.image = Mock(type=image_type)
