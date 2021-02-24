@@ -16,10 +16,25 @@ from thumbor.config import Config
 from thumbor.context import Context
 from thumbor.engines.pil import Engine as PileEngine
 from thumbor_wand_engine.engine import Engine
-from thumbor_wand_engine.engine import GRAYSCALE_TYPE
-from thumbor_wand_engine.engine import GRAYSCALEALPHA_TYPE
 from unittest import TestCase
 from unittest.mock import Mock
+from wand.image import IMAGE_TYPES
+
+
+(
+    UNDEFINED_TYPE,
+    BILEVEL_TYPE,
+    GRAYSCALE_TYPE,
+    GRAYSCALEALPHA_TYPE,
+    PALETTE_TYPE,
+    PALETTEALPHA_TYPE,
+    TRUECOLOR_TYPE,
+    TRUECOLORALPHA_TYPE,
+    COLORSEPARATION_TYPE,
+    COLORSEPARATIONALPHA_TYPE,
+    OPTIMIZE_TYPE,
+    PALETTEBILEVELALPHA_TYPE,
+) = IMAGE_TYPES
 
 
 STORAGE_PATH = abspath(join(dirname(__file__), "../thumbor_tests/fixtures/images/"))
@@ -172,6 +187,13 @@ class WandEngineTestCase(TestCase):
         engine.image = Mock(type=image_type)
         image = engine.convert_to_grayscale(alpha=False)
         assert engine.image.type == image.type == GRAYSCALE_TYPE
+
+    @parameterized.expand(IMAGE_TYPES)
+    def test_enable_alpha(self, image_type):
+        engine = Engine(self.context)
+        engine.image = Mock(type=image_type)
+        engine.enable_alpha()
+        assert engine.image.type == TRUECOLORALPHA_TYPE
 
 
 class WandEngineTransformationsTestCase(TestCase):

@@ -88,10 +88,10 @@ class Engine(BaseEngine):
         self.image.composite(other_engine.image, pos[0], pos[1], operator)
 
     def enable_alpha(self):
-        if self._is_image_type_grayscale():
-            self.image.type = GRAYSCALEALPHA_TYPE
-        else:
-            self.image.type = TRUECOLORALPHA_TYPE
+        """enable_alpha is expected to not only enable the alpha channel but
+        also convert the image to truecolor/rgb, regardlessly; this method
+        should have a more explicit name — but that ship has sailed =/"""
+        self.image.type = TRUECOLORALPHA_TYPE
 
     def convert_to_grayscale(self, update_image=True, alpha=True):
         image = self.image.clone()
@@ -108,6 +108,3 @@ class Engine(BaseEngine):
 
     def _is_image_type_alpha(self):
         return "alpha" in self.image.type or "matte" in self.image.type
-
-    def _is_image_type_grayscale(self):
-        return "grayscale" in self.image.type
