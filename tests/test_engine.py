@@ -201,6 +201,35 @@ class WandEngineTestCase(TestCase):
         engine.enable_alpha()
         assert engine.image.type == TRUECOLORALPHA_TYPE
 
+    def test_can_create_image_from_buffer(self):
+        engine = Engine(self.context)
+        with open(join(STORAGE_PATH, "paletted-transparent.png"), "rb") as image_file:
+            buffer = image_file.read()
+        engine.load(buffer, ".png")
+        assert engine.image.format == "PNG"
+        assert engine.image.type == TRUECOLORALPHA_TYPE
+        assert engine.image.colors <= 256
+
+    @parameterized.expand(
+        [
+            ("paletted-transparent.png", "PNG"),
+            ("image.jpg", "JPEG"),
+            ("image.webp", "WEBP"),
+            ("image.webp", "WEBP"),
+            ("animated.gif", "GIF"),
+            ("gradient_8bit.tif", "TIFF"),
+            ("Commons-logo.svg", "PNG"),  # `BaseEngine.load` converts SVG to PNG
+        ]
+    )
+    def test_can_create_image_from_buffer_extension_none(
+        self, image_file, expected_format
+    ):
+        engine = Engine(self.context)
+        with open(join(STORAGE_PATH, image_file), "rb") as image_file:
+            buffer = image_file.read()
+        engine.load(buffer, None)
+        assert engine.image.format == expected_format
+
 
 class WandEngineTransformationsTestCase(TestCase):
     def setUp(self):
