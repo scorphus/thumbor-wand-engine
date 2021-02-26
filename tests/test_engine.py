@@ -8,6 +8,7 @@
 # http://www.opensource.org/licenses/mit-license
 # Copyright (c) 2020-2021, Pablo S. Blum de Aguiar <scorphus@gmail.com>
 
+from io import BytesIO
 from os.path import abspath
 from os.path import dirname
 from os.path import join
@@ -229,6 +230,44 @@ class WandEngineTestCase(TestCase):
             buffer = image_file.read()
         engine.load(buffer, None)
         assert engine.image.format == expected_format
+
+    def test_can_read_as_is(self):
+        engine = Engine(self.context)
+        with open(join(STORAGE_PATH, "paletted-transparent.png"), "rb") as image_file:
+            buffer = image_file.read()
+        engine.load(buffer, ".png")
+        img = engine.create_image(BytesIO(engine.read()))
+        assert img.format == "PNG"
+        assert img.type == TRUECOLORALPHA_TYPE
+        assert img.colors <= 256
+
+    @parameterized.expand(
+        [
+            ("PNG", TRUECOLORALPHA_TYPE),
+            ("WEBP", TRUECOLORALPHA_TYPE),
+            ("JPEG", TRUECOLOR_TYPE),
+        ]
+    )
+    def test_can_read_as_format(self, image_format, expected_type):
+        engine = Engine(self.context)
+        with open(join(STORAGE_PATH, "paletted-transparent.png"), "rb") as image_file:
+            buffer = image_file.read()
+        engine.load(buffer, ".png")
+        img = engine.create_image(BytesIO(engine.read(f".{image_format.lower()}")))
+        assert img.format == image_format
+        assert img.type == expected_type
+
+    @parameterized.expand([("WEBP", 75), ("WEBP", 50), ("JPEG", 75), ("JPEG", 50)])
+    def test_can_read_as_format_quality(self, image_format, quality):
+        engine = Engine(self.context)
+        with open(join(STORAGE_PATH, "paletted-transparent.png"), "rb") as image_file:
+            buffer = image_file.read()
+        engine.load(buffer, ".png")
+        img = engine.create_image(
+            BytesIO(engine.read(f".{image_format.lower()}", quality))
+        )
+        assert engine.image.compression_quality == quality
+        assert img.format == image_format
 
 
 class WandEngineTransformationsTestCase(TestCase):

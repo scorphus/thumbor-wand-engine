@@ -58,7 +58,12 @@ class Engine(BaseEngine):
 
     def read(self, extension=None, quality=None):
         if extension is not None:
-            return self.image.convert(extension.lstrip(".")).make_blob()
+            self.extension = extension
+        image_format = self.extension.lstrip(".")
+        if self.image.format != image_format:
+            self.image.format = image_format
+        if quality is not None:
+            self.image.compression_quality = quality
         return self.image.make_blob()
 
     @deprecated("Use image_data_as_rgb instead.")
