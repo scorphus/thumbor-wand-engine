@@ -26,7 +26,7 @@ setup:
 # install dependencies
 setup-ci:
 	@pip install -U -e .[tests]
-	@pip install -U -e thumbor[tests] "py3exiv2==0.*,>=0.7.1,!=0.7.2,!=0.8.0,!=0.9.3"
+	@pip install -U -e thumbor[tests]
 .PHONY: setup-ci
 
 # run isort, black and flake8 for style guide enforcement
