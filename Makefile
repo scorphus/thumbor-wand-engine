@@ -7,6 +7,11 @@
 # http://www.opensource.org/licenses/mit-license
 # Copyright (c) 2020-2021, Pablo S. Blum de Aguiar <scorphus@gmail.com>
 
+SHELL=/bin/bash  # helps with the glob below
+
+# Ignore tests that do not include the engine in any way
+IGNORE_TESTS := --ignore-glob=*test_{autojpg,format,max_age}.py
+
 # list all available targets
 list:
 	@sh -c "$(MAKE) -p no_targets__ | awk -F':' '/^[a-zA-Z0-9][^\$$#\/\\t=]*:([^=]|$$)/ {split(\$$1,A,/ /);for(i in A)print A[i]}' | grep -v '__\$$' | grep -v 'make\[1\]' | grep -v 'Makefile' | sort"
@@ -69,11 +74,8 @@ integration:
 .PHONY: integration
 
 acceptance:
-	@env ENGINE=thumbor_wand_engine pytest -sv \
-		--cov=thumbor_wand_engine thumbor_tests/filters/ \
-		--ignore-glob=*test_autojpg.py \
-		--ignore-glob=*test_format.py \
-		--ignore-glob=*test_max_age.py
+	@env ENGINE=thumbor_wand_engine pytest -sv --cov=thumbor_wand_engine \
+		thumbor_tests/filters/ $(IGNORE_TESTS)
 .PHONY: acceptance
 
 coverage-html:
