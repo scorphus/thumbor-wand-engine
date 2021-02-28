@@ -74,18 +74,18 @@ unit:
 	@pytest -sv --cov=thumbor_wand_engine tests/
 .PHONY: unit
 
-integration:
-	@pytest -sv --cov=thumbor_wand_engine integration_tests/
-.PHONY: integration
-
 acceptance:
-	@env ENGINE=thumbor_wand_engine pytest -sv --cov=thumbor_wand_engine \
+	@env ENGINE=thumbor_wand_engine pytest -sv --cov=thumbor_wand_engine --cov-append \
 		thumbor_tests/filters/ $(IGNORE_TESTS)
 .PHONY: acceptance
 
-coverage-html:
+coverage-html: unit acceptance
 	@coverage html
 .PHONY: coverage-html
+
+integration:
+	@pytest -sv integration_tests/
+.PHONY: integration
 
 test: unit
 .PHONY: test
