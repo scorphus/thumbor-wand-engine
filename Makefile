@@ -87,5 +87,5 @@ integration:
 	@pytest -sv integration_tests/
 .PHONY: integration
 
-test: unit
+test: unit acceptance integration
 .PHONY: test

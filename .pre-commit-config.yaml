@@ -48,16 +48,10 @@ repos:
         entry: make black
         types: [python]
         pass_filenames: false
-      - id: unit tests
-        name: unit tests
+      - id: test
+        name: test
         language: system
-        entry: make unit
-        types: [python]
-        pass_filenames: false
-      - id: integration tests
-        name: integration tests
-        language: system
-        entry: make integration
+        entry: make test
         types: [python]
         pass_filenames: false
         stages: [push]
