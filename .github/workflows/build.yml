@@ -34,10 +34,10 @@ jobs:
         run: make setup-ci
       - name: Run unit tests
         run: make unit
+      - name: Run acceptance tests
+        run: make acceptance
       - name: Run integration tests
         run: make integration
-      - name: Run acceptance tests
-        run: make compile_ext acceptance
       - name: Run linters
         run: make lint
       - name: Send coverage stats to Codecov

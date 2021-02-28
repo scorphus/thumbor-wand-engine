@@ -74,7 +74,7 @@ unit:
 	@pytest -sv --cov=thumbor_wand_engine tests/
 .PHONY: unit
 
-acceptance:
+acceptance: compile_ext
 	@env ENGINE=thumbor_wand_engine pytest -sv --cov=thumbor_wand_engine --cov-append \
 		thumbor_tests/filters/ $(IGNORE_TESTS)
 .PHONY: acceptance
@@ -83,7 +83,7 @@ coverage-html: unit acceptance
 	@coverage html
 .PHONY: coverage-html
 
-integration:
+integration: compile_ext
 	@pytest -sv integration_tests/
 .PHONY: integration
 
