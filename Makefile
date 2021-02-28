@@ -89,18 +89,3 @@ coverage-html:
 
 test: unit
 .PHONY: test
-
-test-ci:
-	@if [ -n "$$ACCEPTANCE_TEST" ]; then \
-		$(MAKE) compile_ext acceptance; \
-	elif [ -n "$$LINT_TEST" ]; then \
-		$(MAKE) lint; \
-	elif [ -n "$$INTEGRATION_TEST" ]; then \
-		$(MAKE) integration; \
-	elif [ -n "$$UNIT_TEST" ]; then \
-		$(MAKE) unit; \
-	else \
-		echo "I don't know what to do ¯\_(ツ)_/¯"; \
-		exit 1; \
-	fi
-.PHONY: test-ci
