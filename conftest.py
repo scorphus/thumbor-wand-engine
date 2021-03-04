@@ -19,12 +19,7 @@ Config.allow_environment_variables()
 
 
 async def get_filtered(
-    self,
-    source_image,
-    filter_name,
-    params_string,
-    config_context=None,
-    mode="RGB",
+    self, source_image, filter_name, params_string, config_context=None, mode="RGB"
 ):
     fltr = self.get_filter(filter_name, params_string, config_context)
     image = Image(filename=self.get_fixture_path(source_image))
