@@ -10,7 +10,7 @@
 SHELL=/bin/bash  # helps with the glob below
 
 # Ignore tests that do not include the engine in any way
-IGNORE_TESTS := --ignore-glob=*test_{autojpg,format,max_age}.py
+IGNORE_TESTS := --ignore-glob=*test_{autojpg,format,max_age,quality}.py
 
 # Work around inconsistent pseudo-random number generation across platforms
 ifeq ($(shell uname), Darwin)

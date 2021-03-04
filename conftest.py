@@ -23,16 +23,7 @@ async def get_filtered(
 ):
     fltr = self.get_filter(filter_name, params_string, config_context)
     image = Image(filename=self.get_fixture_path(source_image))
-    # Special case for the quality test, because the quality filter
-    # doesn't really affect the image, it only sets a context value
-    # for use on save. But here we convert the result,
-    # we do not save it
-    if params_string == "quality(10)":
-        img_buffer = image.make_blob()  # TODO: quality has to be reduce here
-        fltr.engine.load(img_buffer, ".jpg")
-    else:
-        img_buffer = image.make_blob()
-        fltr.engine.load(img_buffer, ".png")
+    fltr.engine.load(image.make_blob(), ".png")
     fltr.context.transformer.img_operation_worker()
     await fltr.run()
     return fltr.engine.image
