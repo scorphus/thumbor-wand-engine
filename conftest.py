@@ -35,7 +35,6 @@ async def get_filtered(
         fltr.engine.load(img_buffer, ".png")
     fltr.context.transformer.img_operation_worker()
     await fltr.run()
-    fltr.engine.image = fltr.engine.image.convert(mode)
     return fltr.engine.image
 
 
