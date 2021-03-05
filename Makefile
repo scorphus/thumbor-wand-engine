@@ -17,6 +17,9 @@ ifeq ($(shell uname), Darwin)
 	IGNORE_TESTS += --ignore-glob=*test_noise.py
 endif
 
+# Another workaround for a test that should be fixed upstream
+IGNORE_TESTS += --ignore-glob=*rgb.py
+
 # list all available targets
 list:
 	@sh -c "$(MAKE) -p no_targets__ | awk -F':' '/^[a-zA-Z0-9][^\$$#\/\\t=]*:([^=]|$$)/ {split(\$$1,A,/ /);for(i in A)print A[i]}' | grep -v '__\$$' | grep -v 'make\[1\]' | grep -v 'Makefile' | sort"
