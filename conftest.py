@@ -11,6 +11,7 @@
 from derpconf.config import Config
 from thumbor.testing import FilterTestCase
 from wand.image import Image
+from wand.version import MAGICK_VERSION_INFO
 
 import pytest
 
@@ -36,10 +37,9 @@ def get_fixture(self, name, mode="RGB"):
 
 @staticmethod
 def get_ssim(actual, expected):
-    # TODO: change from "mean_squared" to "structural_similarity"
-    # Check https://docs.wand-py.org/en/latest/wand/image.html#wand.image.COMPARE_METRICS
-    _, metric = actual.compare(expected, "mean_squared")
-    return round(1 - metric, 4)
+    metric = "mean_absolute" if MAGICK_VERSION_INFO[0] > 6 else "mean_squared"
+    _, distortion = actual.compare(expected, metric)
+    return round(1 - distortion, 3)
 
 
 @pytest.fixture(autouse=True)
