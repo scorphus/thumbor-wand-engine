@@ -87,14 +87,6 @@ class Engine(BaseEngine):
             data=data,
         )
 
-    def draw_rectangle(self, x, y, width, height):
-        with Drawing() as draw:
-            draw.fill_color = "transparent"
-            draw.stroke_color = "white"
-            draw.stroke_width(1)
-            draw.rectangle(x, y, width=width, height=height)
-            draw(self.image)
-
     def paste(self, other_engine, pos, merge=True):
         operator = "over" if merge else "atop"
         self.image.composite(other_engine.image, pos[0], pos[1], operator)
@@ -126,3 +118,12 @@ class Engine(BaseEngine):
             COLORSEPARATIONALPHA_TYPE,
             PALETTEBILEVELALPHA_TYPE,
         )
+
+    def draw_rectangle(self, x, y, width, height):  # pragma: no cover
+        """draw_rectangle is used only in `/debug` routes"""
+        with Drawing() as draw:
+            draw.fill_color = "transparent"
+            draw.stroke_color = "white"
+            draw.stroke_width = 1
+            draw.rectangle(x, y, width=width, height=height)
+            draw(self.image)
