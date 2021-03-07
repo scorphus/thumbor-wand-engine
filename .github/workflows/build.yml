@@ -23,7 +23,7 @@ jobs:
     container: thumbororg/thumbor-test:${{ matrix.image-tag }}
     steps:
       - name: Install missing APT dependencies
-        run: apt install -y curl git libmagickwand-dev
+        run: apt update && apt install -y curl git libmagickwand-dev
       - uses: actions/checkout@v2
         with:
           submodules: recursive
