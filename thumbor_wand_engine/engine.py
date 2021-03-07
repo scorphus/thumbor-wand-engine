@@ -38,6 +38,15 @@ class Engine(BaseEngine):
     def create_image(self, buffer):
         return Image(blob=buffer)
 
+    def is_multiple(self):
+        """is_multiple allows a GIF to be converted to WEBP (e.g. AUTO_WEBP) but
+        does not prevent conversion to WEBM or MP4 when `gifv` is used"""
+        return bool(
+            self.image
+            and self.image.animation
+            and "gifv" in self.context.request.filters
+        )
+
     @property
     def size(self):
         return self.image.size

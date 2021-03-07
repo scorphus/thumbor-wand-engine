@@ -269,6 +269,22 @@ class WandEngineTestCase(TestCase):
         assert engine.image.compression_quality == quality
         assert img.format == image_format
 
+    @parameterized.expand(
+        [
+            (None, ["gifv"], False),
+            (Mock(animation=False), ["gifv", "blur"], False),
+            (Mock(animation=True), ["blur", "fill"], False),
+            (Mock(animation=True), [], False),
+            (Mock(animation=True), ["gifv"], True),
+            (Mock(animation=True), ["gifv", "fill"], True),
+        ]
+    )
+    def test_is_multiple(self, image, filters, expected_output):
+        engine = Engine(Mock())
+        engine.image = image
+        engine.context.request.filters = filters
+        assert engine.is_multiple() is expected_output
+
 
 class WandEngineTransformationsTestCase(TestCase):
     def setUp(self):
