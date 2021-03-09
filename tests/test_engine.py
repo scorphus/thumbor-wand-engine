@@ -19,7 +19,10 @@ from thumbor.engines.pil import Engine as PileEngine
 from thumbor_wand_engine.engine import Engine
 from unittest import TestCase
 from unittest.mock import Mock
+from wand.color import Color
 from wand.image import IMAGE_TYPES
+
+import pytest
 
 
 (
@@ -41,24 +44,33 @@ from wand.image import IMAGE_TYPES
 STORAGE_PATH = abspath(join(dirname(__file__), "../thumbor_tests/fixtures/images/"))
 
 
-class WandEngineTestCase(TestCase):
-    def get_context(self):
-        cfg = Config(
-            SECURITY_KEY="ACME-SEC",
-            ENGINE="thumbor_wand_engine",
-            IMAGE_METADATA_READ_FORMATS="exif,xmp",
-        )
-        cfg.LOADER = "thumbor.loaders.file_loader"
-        cfg.FILE_LOADER_ROOT_PATH = STORAGE_PATH
-        cfg.STORAGE = "thumbor.storages.no_storage"
-        return Context(config=cfg)
+def get_context():
+    cfg = Config(
+        SECURITY_KEY="ACME-SEC",
+        ENGINE="thumbor_wand_engine",
+        IMAGE_METADATA_READ_FORMATS="exif,xmp",
+    )
+    cfg.LOADER = "thumbor.loaders.file_loader"
+    cfg.FILE_LOADER_ROOT_PATH = STORAGE_PATH
+    cfg.STORAGE = "thumbor.storages.no_storage"
+    return Context(config=cfg)
 
+
+class WandEngineTestCase(TestCase):
     def setUp(self):
-        self.context = self.get_context()
+        self.context = get_context()
 
     def test_create_engine(self):
         engine = Engine(self.context)
         assert isinstance(engine, Engine)
+
+    def test_gen_image(self):
+        size = 179, 359
+        engine = Engine(self.context)
+        green_image = engine.gen_image(size, "green")
+        assert green_image.size == size
+        assert Color("green") in green_image.histogram
+        assert green_image.histogram[Color("green")] == size[0] * size[1]
 
     def test_create_image(self):
         engine = Engine(self.context)
@@ -306,3 +318,55 @@ class WandEngineTransformationsTestCase(TestCase):
     def test_resize(self):
         self.engine.resize(1.0, 2.0)
         self.engine.image.resize.assert_called_once_with(1, 2)
+
+    @parameterized.expand([(60,), (90,), (123.45,)])
+    def test_rotate(self, degrees):
+        self.engine.rotate(degrees)
+        self.engine.image.rotate.assert_called_once_with(degrees)
+
+    @parameterized.expand(
+        [
+            ((359, 179), True, "over"),
+            ((179, 359), False, "atop"),
+        ]
+    )
+    def test_paste(self, pos, merge, expected_operator):
+        other_engine = Mock()
+        self.engine.paste(other_engine, pos, merge)
+        self.engine.image.composite.assert_called_once_with(
+            other_engine.image, pos[0], pos[1], expected_operator
+        )
+
+
+@pytest.fixture
+def transp_engine():
+    engine = Engine(get_context())
+    with open(join(STORAGE_PATH, "paletted-transparent.png"), "rb") as image_file:
+        buffer = image_file.read()
+    engine.load(buffer, "png")
+    return engine
+
+
+@pytest.fixture
+def transp_pixels(transp_engine):
+    return sum(a == 0 for a in transp_engine.image.export_pixels()[3::4])
+
+
+def test_resize_preserves_transparency(transp_engine, transp_pixels):
+    width, height = transp_engine.image.size
+    transp_engine.resize(width // 2, height // 2)
+    img = transp_engine.create_image(BytesIO(transp_engine.read(".png")))
+    assert img.type == TRUECOLORALPHA_TYPE
+    assert img.format == "PNG"
+    expected_transp_pixels = transp_pixels // 4 * 0.974  # 2.6% tolerance
+    assert sum(a == 0 for a in img.export_pixels()[3::4]) >= expected_transp_pixels
+
+
+@pytest.mark.parametrize("degrees", [90, 180, 270])
+def test_rotate_preserves_transparency(degrees, transp_engine, transp_pixels):
+    transp_engine.rotate(degrees)
+    img = transp_engine.create_image(BytesIO(transp_engine.read(".png")))
+    assert img.type == TRUECOLORALPHA_TYPE
+    assert img.format == "PNG"
+    expected_transp_pixels = transp_pixels
+    assert sum(a == 0 for a in img.export_pixels()[3::4]) == expected_transp_pixels
