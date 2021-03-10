@@ -214,7 +214,8 @@ class WandEngineTestCase(TestCase):
     @parameterized.expand(IMAGE_TYPES)
     def test_enable_alpha(self, image_type):
         engine = Engine(self.context)
-        engine.image = Mock(type=image_type)
+        engine.image = engine.gen_image((1, 1), "green")
+        engine.image.type = image_type
         engine.enable_alpha()
         assert engine.image.type == TRUECOLORALPHA_TYPE
 
