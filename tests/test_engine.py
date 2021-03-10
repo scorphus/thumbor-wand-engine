@@ -167,7 +167,8 @@ class WandEngineTestCase(TestCase):
     )
     def test_get_image_mode(self, image_type, expected_mode):
         engine = Engine(self.context)
-        engine.image = Mock(type=image_type)
+        engine.image = engine.gen_image((1, 1), "green")
+        engine.image.type = image_type
         assert engine.get_image_mode() == expected_mode
 
     @parameterized.expand(
@@ -188,14 +189,16 @@ class WandEngineTestCase(TestCase):
     )
     def test_convert_to_grayscale(self, image_type, expected_type):
         engine = Engine(self.context)
-        engine.image = Mock(type=image_type)
+        engine.image = engine.gen_image((1, 1), "green")
+        engine.image.type = image_type
         image = engine.convert_to_grayscale()
         assert engine.image.type == image.type == expected_type
 
     def test_convert_to_grayscale_update_image_false(self):
         image_type, expected_type = TRUECOLOR_TYPE, GRAYSCALE_TYPE
         engine = Engine(self.context)
-        engine.image = Mock(type=image_type)
+        engine.image = engine.gen_image((1, 1), "green")
+        engine.image.type = image_type
         image = engine.convert_to_grayscale(update_image=False)
         assert image.type == expected_type
         assert engine.image.type != expected_type
@@ -203,7 +206,8 @@ class WandEngineTestCase(TestCase):
     @parameterized.expand(IMAGE_TYPES)
     def test_convert_to_grayscale_alpha_false(self, image_type):
         engine = Engine(self.context)
-        engine.image = Mock(type=image_type)
+        engine.image = engine.gen_image((1, 1), "green")
+        engine.image.type = image_type
         image = engine.convert_to_grayscale(alpha=False)
         assert engine.image.type == image.type == GRAYSCALE_TYPE
 

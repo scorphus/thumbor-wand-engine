@@ -15,20 +15,9 @@ from wand.image import Image
 from wand.image import IMAGE_TYPES
 
 
-(
-    UNDEFINED_TYPE,
-    BILEVEL_TYPE,
-    GRAYSCALE_TYPE,
-    GRAYSCALEALPHA_TYPE,
-    PALETTE_TYPE,
-    PALETTEALPHA_TYPE,
-    TRUECOLOR_TYPE,
-    TRUECOLORALPHA_TYPE,
-    COLORSEPARATION_TYPE,
-    COLORSEPARATIONALPHA_TYPE,
-    OPTIMIZE_TYPE,
-    PALETTEBILEVELALPHA_TYPE,
-) = IMAGE_TYPES
+GRAYSCALE_TYPE = IMAGE_TYPES[2]
+GRAYSCALEALPHA_TYPE = IMAGE_TYPES[3]
+TRUECOLORALPHA_TYPE = IMAGE_TYPES[7]
 
 
 class Engine(BaseEngine):
@@ -81,9 +70,7 @@ class Engine(BaseEngine):
 
     @deprecated("Use image_data_as_rgb instead.")
     def get_image_mode(self):
-        if self._is_image_type_alpha():
-            return "RGBA"
-        return "RGB"
+        return "RGBA" if self.image.alpha_channel else "RGB"
 
     def image_data_as_rgb(self, update_image=True):
         return self.get_image_mode(), self.get_image_data()
@@ -108,7 +95,7 @@ class Engine(BaseEngine):
 
     def convert_to_grayscale(self, update_image=True, alpha=True):
         image = self.image.clone()
-        if alpha and self._is_image_type_alpha():
+        if alpha and self.image.alpha_channel:
             image.type = GRAYSCALEALPHA_TYPE
         else:
             image.type = GRAYSCALE_TYPE
@@ -118,15 +105,6 @@ class Engine(BaseEngine):
 
     def rotate(self, degrees):
         self.image.rotate(degrees)
-
-    def _is_image_type_alpha(self):
-        return self.image.type in (
-            GRAYSCALEALPHA_TYPE,
-            PALETTEALPHA_TYPE,
-            TRUECOLORALPHA_TYPE,
-            COLORSEPARATIONALPHA_TYPE,
-            PALETTEBILEVELALPHA_TYPE,
-        )
 
     def draw_rectangle(self, x, y, width, height):  # pragma: no cover
         """draw_rectangle is used only in `/debug` routes"""
