@@ -106,6 +106,9 @@ class Engine(BaseEngine):
     def rotate(self, degrees):
         self.image.rotate(degrees)
 
+    def strip_icc(self):
+        del self.image.profiles["icc"]
+
     def draw_rectangle(self, x, y, width, height):  # pragma: no cover
         """draw_rectangle is used only in `/debug` routes"""
         with Drawing() as draw:

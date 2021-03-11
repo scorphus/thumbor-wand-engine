@@ -342,6 +342,10 @@ class WandEngineTransformationsTestCase(TestCase):
             other_engine.image, pos[0], pos[1], expected_operator
         )
 
+    def test_strip_icc(self):
+        self.engine.strip_icc()
+        self.engine.image.profiles.__delitem__.assert_called_once_with("icc")
+
 
 @pytest.fixture
 def transp_engine():
