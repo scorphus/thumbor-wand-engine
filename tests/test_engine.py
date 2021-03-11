@@ -18,7 +18,7 @@ from thumbor.context import Context
 from thumbor.engines.pil import Engine as PileEngine
 from thumbor_wand_engine.engine import Engine
 from unittest import TestCase
-from unittest.mock import Mock
+from unittest.mock import MagicMock
 from wand.color import Color
 from wand.image import IMAGE_TYPES
 
@@ -289,15 +289,15 @@ class WandEngineTestCase(TestCase):
     @parameterized.expand(
         [
             (None, ["gifv"], False),
-            (Mock(animation=False), ["gifv", "blur"], False),
-            (Mock(animation=True), ["blur", "fill"], False),
-            (Mock(animation=True), [], False),
-            (Mock(animation=True), ["gifv"], True),
-            (Mock(animation=True), ["gifv", "fill"], True),
+            (MagicMock(animation=False), ["gifv", "blur"], False),
+            (MagicMock(animation=True), ["blur", "fill"], False),
+            (MagicMock(animation=True), [], False),
+            (MagicMock(animation=True), ["gifv"], True),
+            (MagicMock(animation=True), ["gifv", "fill"], True),
         ]
     )
     def test_is_multiple(self, image, filters, expected_output):
-        engine = Engine(Mock())
+        engine = Engine(MagicMock())
         engine.image = image
         engine.context.request.filters = filters
         assert engine.is_multiple() is expected_output
@@ -306,7 +306,7 @@ class WandEngineTestCase(TestCase):
 class WandEngineTransformationsTestCase(TestCase):
     def setUp(self):
         self.engine = Engine({})
-        self.engine.image = Mock()
+        self.engine.image = MagicMock()
 
     def test_flip_vertically(self):
         self.engine.flip_vertically()
@@ -336,7 +336,7 @@ class WandEngineTransformationsTestCase(TestCase):
         ]
     )
     def test_paste(self, pos, merge, expected_operator):
-        other_engine = Mock()
+        other_engine = MagicMock()
         self.engine.paste(other_engine, pos, merge)
         self.engine.image.composite.assert_called_once_with(
             other_engine.image, pos[0], pos[1], expected_operator
