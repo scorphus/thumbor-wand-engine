@@ -346,6 +346,13 @@ class WandEngineTransformationsTestCase(TestCase):
         self.engine.strip_icc()
         self.engine.image.profiles.__delitem__.assert_called_once_with("icc")
 
+    def test_strip_exif(self):
+        self.engine.strip_exif()
+        assert self.engine.image.profiles.__delitem__.call_count == 3
+        self.engine.image.profiles.__delitem__.assert_any_call("exif")
+        self.engine.image.profiles.__delitem__.assert_any_call("iptc")
+        self.engine.image.profiles.__delitem__.assert_any_call("xmp")
+
 
 @pytest.fixture
 def transp_engine():

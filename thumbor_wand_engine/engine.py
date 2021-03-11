@@ -109,6 +109,11 @@ class Engine(BaseEngine):
     def strip_icc(self):
         del self.image.profiles["icc"]
 
+    def strip_exif(self):
+        del self.image.profiles["exif"]
+        del self.image.profiles["iptc"]
+        del self.image.profiles["xmp"]
+
     def draw_rectangle(self, x, y, width, height):  # pragma: no cover
         """draw_rectangle is used only in `/debug` routes"""
         with Drawing() as draw:
