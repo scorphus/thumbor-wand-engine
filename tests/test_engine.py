@@ -406,3 +406,8 @@ def test_paste(pos, merge, expected_operator, green_engine, green_image):
 def test_get_orientation(orientation_int, orientation_str, green_engine):
     green_engine.image.orientation = orientation_str
     assert green_engine.get_orientation() == orientation_int
+
+
+def test_reorientate(green_engine, green_image):
+    green_engine.reorientate()
+    green_image.auto_orient.assert_called_once_with()

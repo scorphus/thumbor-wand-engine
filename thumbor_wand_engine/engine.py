@@ -118,6 +118,9 @@ class Engine(BaseEngine):
     def get_orientation(self):
         return ORIENTATION_TYPES.index(self.image.orientation)
 
+    def reorientate(self, *args, **kwargs):
+        self.image.auto_orient()
+
     def draw_rectangle(self, x, y, width, height):  # pragma: no cover
         """draw_rectangle is used only in `/debug` routes"""
         with Drawing() as draw:
