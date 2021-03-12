@@ -12,12 +12,10 @@ from io import BytesIO
 from os.path import abspath
 from os.path import dirname
 from os.path import join
-from parameterized import parameterized
 from thumbor.config import Config
 from thumbor.context import Context
 from thumbor.engines.pil import Engine as PileEngine
 from thumbor_wand_engine.engine import Engine
-from unittest import TestCase
 from unittest.mock import MagicMock
 from wand.color import Color
 from wand.image import IMAGE_TYPES
@@ -56,253 +54,6 @@ def get_context():
     return Context(config=cfg)
 
 
-class WandEngineTestCase(TestCase):
-    def setUp(self):
-        self.context = get_context()
-
-    def test_create_engine(self):
-        engine = Engine(self.context)
-        assert isinstance(engine, Engine)
-
-    def test_gen_image(self):
-        size = 179, 359
-        engine = Engine(self.context)
-        green_image = engine.gen_image(size, "green")
-        assert green_image.size == size
-        assert Color("green") in green_image.histogram
-        assert green_image.histogram[Color("green")] == size[0] * size[1]
-
-    def test_create_image(self):
-        engine = Engine(self.context)
-        with open(join(STORAGE_PATH, "image.jpg"), "rb") as image_file:
-            buffer = image_file.read()
-        engine.load(buffer, None)
-        assert engine.image.format == "JPEG"
-
-    def test_create_image_16bit_per_channel_lsb(self):
-        engine = Engine(self.context)
-        with open(
-            join(STORAGE_PATH, "gradient_lsb_16bperchannel.tif"), "rb"
-        ) as image_file:
-            buffer = image_file.read()
-        assert buffer is not None
-        engine.load(buffer, None)
-        assert engine.image.format == "TIFF"
-        assert engine.image.size == (100, 100)
-
-    def test_load_tif_8bit_per_channel(self):
-        engine = Engine(self.context)
-        with open(join(STORAGE_PATH, "gradient_8bit.tif"), "rb") as image_file:
-            buffer = image_file.read()
-        assert buffer is not None
-        engine.load(buffer, None)
-        assert engine.image.format == "TIFF"
-        assert engine.image.size == (100, 100)
-
-    def test_set_image_data_JPG(self):
-        engine = Engine(self.context)
-        with open(join(STORAGE_PATH, "image.jpg"), "rb") as image_file:
-            buffer = image_file.read()
-        assert buffer is not None
-        engine.load(buffer, None)
-        _, data = engine.image_data_as_rgb()
-        engine.set_image_data(data)
-        assert engine.image.format == "JPEG"
-        assert engine.image.size == (300, 400)
-
-    def test_set_image_data_PNG(self):
-        engine = Engine(self.context)
-        with open(join(STORAGE_PATH, "1bit.png"), "rb") as image_file:
-            buffer = image_file.read()
-        assert buffer is not None
-        engine.load(buffer, None)
-        _, data = engine.image_data_as_rgb()
-        engine.set_image_data(data)
-        assert engine.image.format == "PNG"
-        assert engine.image.size == (691, 212)
-
-    def test_compare_image_data_and_mode(self):
-        engine = Engine(self.context)
-        pil_engine = PileEngine(self.context)
-        with open(join(STORAGE_PATH, "1bit.png"), "rb") as image_file:
-            buffer = image_file.read()
-        assert buffer is not None
-        engine.load(buffer, ".png")
-        pil_engine.load(buffer, ".png")
-        pil_mode, pil_data = pil_engine.image_data_as_rgb()
-        mode, data = engine.image_data_as_rgb()
-        assert mode == pil_mode
-        assert len(data) == len(pil_data)
-        assert data[:100] == pil_data[:100]
-        assert data[-100:] == pil_data[-100:]
-
-    def test_get_and_set_image_data(self):
-        engine = Engine(self.context)
-        with open(join(STORAGE_PATH, "1bit.png"), "rb") as image_file:
-            buffer = image_file.read()
-        assert buffer is not None
-        engine.load(buffer, ".png")
-        _, data_before = engine.image_data_as_rgb()
-        engine.set_image_data(data_before)
-        _, data_after = engine.image_data_as_rgb()
-        assert len(data_before) == len(data_after)
-        assert data_before[:100] == data_after[:100]
-        assert data_before[-100:] == data_after[-100:]
-
-    @parameterized.expand(
-        [
-            (UNDEFINED_TYPE, "RGB"),
-            (BILEVEL_TYPE, "RGB"),
-            (GRAYSCALE_TYPE, "RGB"),
-            (GRAYSCALEALPHA_TYPE, "RGBA"),
-            (PALETTE_TYPE, "RGB"),
-            (PALETTEALPHA_TYPE, "RGBA"),
-            (TRUECOLOR_TYPE, "RGB"),
-            (TRUECOLORALPHA_TYPE, "RGBA"),
-            (COLORSEPARATION_TYPE, "RGB"),
-            (COLORSEPARATIONALPHA_TYPE, "RGBA"),
-            (OPTIMIZE_TYPE, "RGB"),
-            (PALETTEBILEVELALPHA_TYPE, "RGBA"),
-        ],
-    )
-    def test_get_image_mode(self, image_type, expected_mode):
-        engine = Engine(self.context)
-        engine.image = engine.gen_image((1, 1), "green")
-        engine.image.type = image_type
-        assert engine.get_image_mode() == expected_mode
-
-    @parameterized.expand(
-        [
-            (UNDEFINED_TYPE, GRAYSCALE_TYPE),
-            (BILEVEL_TYPE, GRAYSCALE_TYPE),
-            (GRAYSCALE_TYPE, GRAYSCALE_TYPE),
-            (GRAYSCALEALPHA_TYPE, GRAYSCALEALPHA_TYPE),
-            (PALETTE_TYPE, GRAYSCALE_TYPE),
-            (PALETTEALPHA_TYPE, GRAYSCALEALPHA_TYPE),
-            (TRUECOLOR_TYPE, GRAYSCALE_TYPE),
-            (TRUECOLORALPHA_TYPE, GRAYSCALEALPHA_TYPE),
-            (COLORSEPARATION_TYPE, GRAYSCALE_TYPE),
-            (COLORSEPARATIONALPHA_TYPE, GRAYSCALEALPHA_TYPE),
-            (OPTIMIZE_TYPE, GRAYSCALE_TYPE),
-            (PALETTEBILEVELALPHA_TYPE, GRAYSCALEALPHA_TYPE),
-        ],
-    )
-    def test_convert_to_grayscale(self, image_type, expected_type):
-        engine = Engine(self.context)
-        engine.image = engine.gen_image((1, 1), "green")
-        engine.image.type = image_type
-        image = engine.convert_to_grayscale()
-        assert engine.image.type == image.type == expected_type
-
-    def test_convert_to_grayscale_update_image_false(self):
-        image_type, expected_type = TRUECOLOR_TYPE, GRAYSCALE_TYPE
-        engine = Engine(self.context)
-        engine.image = engine.gen_image((1, 1), "green")
-        engine.image.type = image_type
-        image = engine.convert_to_grayscale(update_image=False)
-        assert image.type == expected_type
-        assert engine.image.type != expected_type
-
-    @parameterized.expand(IMAGE_TYPES)
-    def test_convert_to_grayscale_alpha_false(self, image_type):
-        engine = Engine(self.context)
-        engine.image = engine.gen_image((1, 1), "green")
-        engine.image.type = image_type
-        image = engine.convert_to_grayscale(alpha=False)
-        assert engine.image.type == image.type == GRAYSCALE_TYPE
-
-    @parameterized.expand(IMAGE_TYPES)
-    def test_enable_alpha(self, image_type):
-        engine = Engine(self.context)
-        engine.image = engine.gen_image((1, 1), "green")
-        engine.image.type = image_type
-        engine.enable_alpha()
-        assert engine.image.type == TRUECOLORALPHA_TYPE
-
-    def test_can_create_image_from_buffer(self):
-        engine = Engine(self.context)
-        with open(join(STORAGE_PATH, "paletted-transparent.png"), "rb") as image_file:
-            buffer = image_file.read()
-        engine.load(buffer, ".png")
-        assert engine.image.format == "PNG"
-        assert engine.image.type == TRUECOLORALPHA_TYPE
-        assert engine.image.colors <= 256
-
-    @parameterized.expand(
-        [
-            ("paletted-transparent.png", "PNG"),
-            ("image.jpg", "JPEG"),
-            ("image.webp", "WEBP"),
-            ("image.webp", "WEBP"),
-            ("animated.gif", "GIF"),
-            ("gradient_8bit.tif", "TIFF"),
-            ("Commons-logo.svg", "PNG"),  # `BaseEngine.load` converts SVG to PNG
-        ]
-    )
-    def test_can_create_image_from_buffer_extension_none(
-        self, image_file, expected_format
-    ):
-        engine = Engine(self.context)
-        with open(join(STORAGE_PATH, image_file), "rb") as image_file:
-            buffer = image_file.read()
-        engine.load(buffer, None)
-        assert engine.image.format == expected_format
-
-    def test_can_read_as_is(self):
-        engine = Engine(self.context)
-        with open(join(STORAGE_PATH, "paletted-transparent.png"), "rb") as image_file:
-            buffer = image_file.read()
-        engine.load(buffer, ".png")
-        img = engine.create_image(BytesIO(engine.read()))
-        assert img.format == "PNG"
-        assert img.type == TRUECOLORALPHA_TYPE
-        assert img.colors <= 256
-
-    @parameterized.expand(
-        [
-            ("PNG", TRUECOLORALPHA_TYPE),
-            ("WEBP", TRUECOLORALPHA_TYPE),
-            ("JPEG", TRUECOLOR_TYPE),
-        ]
-    )
-    def test_can_read_as_format(self, image_format, expected_type):
-        engine = Engine(self.context)
-        with open(join(STORAGE_PATH, "paletted-transparent.png"), "rb") as image_file:
-            buffer = image_file.read()
-        engine.load(buffer, ".png")
-        img = engine.create_image(BytesIO(engine.read(f".{image_format.lower()}")))
-        assert img.format == image_format
-        assert img.type == expected_type
-
-    @parameterized.expand([("WEBP", 75), ("WEBP", 50), ("JPEG", 75), ("JPEG", 50)])
-    def test_can_read_as_format_quality(self, image_format, quality):
-        engine = Engine(self.context)
-        with open(join(STORAGE_PATH, "paletted-transparent.png"), "rb") as image_file:
-            buffer = image_file.read()
-        engine.load(buffer, ".png")
-        img = engine.create_image(
-            BytesIO(engine.read(f".{image_format.lower()}", quality))
-        )
-        assert engine.image.compression_quality == quality
-        assert img.format == image_format
-
-    @parameterized.expand(
-        [
-            (None, ["gifv"], False),
-            (MagicMock(animation=False), ["gifv", "blur"], False),
-            (MagicMock(animation=True), ["blur", "fill"], False),
-            (MagicMock(animation=True), [], False),
-            (MagicMock(animation=True), ["gifv"], True),
-            (MagicMock(animation=True), ["gifv", "fill"], True),
-        ]
-    )
-    def test_is_multiple(self, image, filters, expected_output):
-        engine = Engine(MagicMock())
-        engine.image = image
-        engine.context.request.filters = filters
-        assert engine.is_multiple() is expected_output
-
-
 @pytest.fixture
 def engine():
     return Engine(get_context())
@@ -330,6 +81,248 @@ def transp_engine(engine):
 @pytest.fixture
 def transp_pixels(transp_engine):
     return sum(a == 0 for a in transp_engine.image.export_pixels()[3::4])
+
+
+def test_gen_image(engine):
+    size = 179, 359
+    green_image = engine.gen_image(size, "green")
+    assert green_image.size == size
+    assert Color("green") in green_image.histogram
+    assert green_image.histogram[Color("green")] == size[0] * size[1]
+
+
+def test_create_image(engine):
+    with open(join(STORAGE_PATH, "image.jpg"), "rb") as image_file:
+        buffer = image_file.read()
+    engine.load(buffer, None)
+    assert engine.image.format == "JPEG"
+
+
+def test_create_image_16bit_per_channel_lsb(engine):
+    with open(join(STORAGE_PATH, "gradient_lsb_16bperchannel.tif"), "rb") as image_file:
+        buffer = image_file.read()
+    assert buffer is not None
+    engine.load(buffer, None)
+    assert engine.image.format == "TIFF"
+    assert engine.image.size == (100, 100)
+
+
+def test_load_tif_8bit_per_channel(engine):
+    with open(join(STORAGE_PATH, "gradient_8bit.tif"), "rb") as image_file:
+        buffer = image_file.read()
+    assert buffer is not None
+    engine.load(buffer, None)
+    assert engine.image.format == "TIFF"
+    assert engine.image.size == (100, 100)
+
+
+def test_set_image_data_JPG(engine):
+    with open(join(STORAGE_PATH, "image.jpg"), "rb") as image_file:
+        buffer = image_file.read()
+    assert buffer is not None
+    engine.load(buffer, None)
+    _, data = engine.image_data_as_rgb()
+    engine.set_image_data(data)
+    assert engine.image.format == "JPEG"
+    assert engine.image.size == (300, 400)
+
+
+def test_set_image_data_PNG(engine):
+    with open(join(STORAGE_PATH, "1bit.png"), "rb") as image_file:
+        buffer = image_file.read()
+    assert buffer is not None
+    engine.load(buffer, None)
+    _, data = engine.image_data_as_rgb()
+    engine.set_image_data(data)
+    assert engine.image.format == "PNG"
+    assert engine.image.size == (691, 212)
+
+
+def test_compare_image_data_and_mode(engine):
+    pil_engine = PileEngine(get_context())
+    with open(join(STORAGE_PATH, "1bit.png"), "rb") as image_file:
+        buffer = image_file.read()
+    assert buffer is not None
+    engine.load(buffer, ".png")
+    pil_engine.load(buffer, ".png")
+    pil_mode, pil_data = pil_engine.image_data_as_rgb()
+    mode, data = engine.image_data_as_rgb()
+    assert mode == pil_mode
+    assert len(data) == len(pil_data)
+    assert data[:100] == pil_data[:100]
+    assert data[-100:] == pil_data[-100:]
+
+
+def test_get_and_set_image_data(engine):
+    with open(join(STORAGE_PATH, "1bit.png"), "rb") as image_file:
+        buffer = image_file.read()
+    assert buffer is not None
+    engine.load(buffer, ".png")
+    _, data_before = engine.image_data_as_rgb()
+    engine.set_image_data(data_before)
+    _, data_after = engine.image_data_as_rgb()
+    assert len(data_before) == len(data_after)
+    assert data_before[:100] == data_after[:100]
+    assert data_before[-100:] == data_after[-100:]
+
+
+@pytest.mark.parametrize(
+    "image_type, expected_mode",
+    [
+        (UNDEFINED_TYPE, "RGB"),
+        (BILEVEL_TYPE, "RGB"),
+        (GRAYSCALE_TYPE, "RGB"),
+        (GRAYSCALEALPHA_TYPE, "RGBA"),
+        (PALETTE_TYPE, "RGB"),
+        (PALETTEALPHA_TYPE, "RGBA"),
+        (TRUECOLOR_TYPE, "RGB"),
+        (TRUECOLORALPHA_TYPE, "RGBA"),
+        (COLORSEPARATION_TYPE, "RGB"),
+        (COLORSEPARATIONALPHA_TYPE, "RGBA"),
+        (OPTIMIZE_TYPE, "RGB"),
+        (PALETTEBILEVELALPHA_TYPE, "RGBA"),
+    ],
+)
+def test_get_image_mode(image_type, expected_mode, engine):
+    engine.image = engine.gen_image((1, 1), "green")
+    engine.image.type = image_type
+    assert engine.get_image_mode() == expected_mode
+
+
+@pytest.mark.parametrize(
+    "image_type, expected_type",
+    [
+        (UNDEFINED_TYPE, GRAYSCALE_TYPE),
+        (BILEVEL_TYPE, GRAYSCALE_TYPE),
+        (GRAYSCALE_TYPE, GRAYSCALE_TYPE),
+        (GRAYSCALEALPHA_TYPE, GRAYSCALEALPHA_TYPE),
+        (PALETTE_TYPE, GRAYSCALE_TYPE),
+        (PALETTEALPHA_TYPE, GRAYSCALEALPHA_TYPE),
+        (TRUECOLOR_TYPE, GRAYSCALE_TYPE),
+        (TRUECOLORALPHA_TYPE, GRAYSCALEALPHA_TYPE),
+        (COLORSEPARATION_TYPE, GRAYSCALE_TYPE),
+        (COLORSEPARATIONALPHA_TYPE, GRAYSCALEALPHA_TYPE),
+        (OPTIMIZE_TYPE, GRAYSCALE_TYPE),
+        (PALETTEBILEVELALPHA_TYPE, GRAYSCALEALPHA_TYPE),
+    ],
+)
+def test_convert_to_grayscale(image_type, expected_type, engine):
+    engine.image = engine.gen_image((1, 1), "green")
+    engine.image.type = image_type
+    image = engine.convert_to_grayscale()
+    assert engine.image.type == image.type == expected_type
+
+
+def test_convert_to_grayscale_update_image_false(engine):
+    image_type, expected_type = TRUECOLOR_TYPE, GRAYSCALE_TYPE
+    engine.image = engine.gen_image((1, 1), "green")
+    engine.image.type = image_type
+    image = engine.convert_to_grayscale(update_image=False)
+    assert image.type == expected_type
+    assert engine.image.type != expected_type
+
+
+@pytest.mark.parametrize("image_type", IMAGE_TYPES)
+def test_convert_to_grayscale_alpha_false(image_type, engine):
+    engine.image = engine.gen_image((1, 1), "green")
+    engine.image.type = image_type
+    image = engine.convert_to_grayscale(alpha=False)
+    assert engine.image.type == image.type == GRAYSCALE_TYPE
+
+
+@pytest.mark.parametrize("image_type", IMAGE_TYPES)
+def test_enable_alpha(image_type, engine):
+    engine.image = engine.gen_image((1, 1), "green")
+    engine.image.type = image_type
+    engine.enable_alpha()
+    assert engine.image.type == TRUECOLORALPHA_TYPE
+
+
+def test_can_create_image_from_buffer(engine):
+    with open(join(STORAGE_PATH, "paletted-transparent.png"), "rb") as image_file:
+        buffer = image_file.read()
+    engine.load(buffer, ".png")
+    assert engine.image.format == "PNG"
+    assert engine.image.type == TRUECOLORALPHA_TYPE
+    assert engine.image.colors <= 256
+
+
+@pytest.mark.parametrize(
+    "image_file, expected_format",
+    [
+        ("paletted-transparent.png", "PNG"),
+        ("image.jpg", "JPEG"),
+        ("image.webp", "WEBP"),
+        ("image.webp", "WEBP"),
+        ("animated.gif", "GIF"),
+        ("gradient_8bit.tif", "TIFF"),
+        ("Commons-logo.svg", "PNG"),  # `BaseEngine.load` converts SVG to PNG
+    ],
+)
+def test_can_create_image_from_buffer_extension_none(
+    image_file, expected_format, engine
+):
+    with open(join(STORAGE_PATH, image_file), "rb") as image_file:
+        buffer = image_file.read()
+    engine.load(buffer, None)
+    assert engine.image.format == expected_format
+
+
+def test_can_read_as_is(engine):
+    with open(join(STORAGE_PATH, "paletted-transparent.png"), "rb") as image_file:
+        buffer = image_file.read()
+    engine.load(buffer, ".png")
+    img = engine.create_image(BytesIO(engine.read()))
+    assert img.format == "PNG"
+    assert img.type == TRUECOLORALPHA_TYPE
+    assert img.colors <= 256
+
+
+@pytest.mark.parametrize(
+    "image_format, expected_type",
+    [
+        ("PNG", TRUECOLORALPHA_TYPE),
+        ("WEBP", TRUECOLORALPHA_TYPE),
+        ("JPEG", TRUECOLOR_TYPE),
+    ],
+)
+def test_can_read_as_format(image_format, expected_type, engine):
+    with open(join(STORAGE_PATH, "paletted-transparent.png"), "rb") as image_file:
+        buffer = image_file.read()
+    engine.load(buffer, ".png")
+    img = engine.create_image(BytesIO(engine.read(f".{image_format.lower()}")))
+    assert img.format == image_format
+    assert img.type == expected_type
+
+
+@pytest.mark.parametrize(
+    "image_format, quality", [("WEBP", 75), ("WEBP", 50), ("JPEG", 75), ("JPEG", 50)]
+)
+def test_can_read_as_format_quality(image_format, quality, engine):
+    with open(join(STORAGE_PATH, "paletted-transparent.png"), "rb") as image_file:
+        buffer = image_file.read()
+    engine.load(buffer, ".png")
+    img = engine.create_image(BytesIO(engine.read(f".{image_format.lower()}", quality)))
+    assert engine.image.compression_quality == quality
+    assert img.format == image_format
+
+
+@pytest.mark.parametrize(
+    "image, filters, expected_output",
+    [
+        (None, ["gifv"], False),
+        (MagicMock(animation=False), ["gifv", "blur"], False),
+        (MagicMock(animation=True), ["blur", "fill"], False),
+        (MagicMock(animation=True), [], False),
+        (MagicMock(animation=True), ["gifv"], True),
+        (MagicMock(animation=True), ["gifv", "fill"], True),
+    ],
+)
+def test_is_multiple(image, filters, expected_output, engine):
+    engine = Engine(MagicMock())
+    engine.image = image
+    engine.context.request.filters = filters
+    assert engine.is_multiple() is expected_output
 
 
 def test_resize_preserves_transparency(transp_engine, transp_pixels):
