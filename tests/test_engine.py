@@ -303,60 +303,24 @@ class WandEngineTestCase(TestCase):
         assert engine.is_multiple() is expected_output
 
 
-class WandEngineTransformationsTestCase(TestCase):
-    def setUp(self):
-        self.engine = Engine({})
-        self.engine.image = MagicMock()
-
-    def test_flip_vertically(self):
-        self.engine.flip_vertically()
-        self.engine.image.flip.assert_called_once_with()
-
-    def test_flip_horizontally(self):
-        self.engine.flip_horizontally()
-        self.engine.image.flop.assert_called_once_with()
-
-    def test_crop(self):
-        self.engine.crop(1.0, 2.0, 3.0, 4.0)
-        self.engine.image.crop.assert_called_once_with(left=1, top=2, right=3, bottom=4)
-
-    def test_resize(self):
-        self.engine.resize(1.0, 2.0)
-        self.engine.image.resize.assert_called_once_with(1, 2)
-
-    @parameterized.expand([(60,), (90,), (123.45,)])
-    def test_rotate(self, degrees):
-        self.engine.rotate(degrees)
-        self.engine.image.rotate.assert_called_once_with(degrees)
-
-    @parameterized.expand(
-        [
-            ((359, 179), True, "over"),
-            ((179, 359), False, "atop"),
-        ]
-    )
-    def test_paste(self, pos, merge, expected_operator):
-        other_engine = MagicMock()
-        self.engine.paste(other_engine, pos, merge)
-        self.engine.image.composite.assert_called_once_with(
-            other_engine.image, pos[0], pos[1], expected_operator
-        )
-
-    def test_strip_icc(self):
-        self.engine.strip_icc()
-        self.engine.image.profiles.__delitem__.assert_called_once_with("icc")
-
-    def test_strip_exif(self):
-        self.engine.strip_exif()
-        assert self.engine.image.profiles.__delitem__.call_count == 3
-        self.engine.image.profiles.__delitem__.assert_any_call("exif")
-        self.engine.image.profiles.__delitem__.assert_any_call("iptc")
-        self.engine.image.profiles.__delitem__.assert_any_call("xmp")
+@pytest.fixture
+def engine():
+    return Engine(get_context())
 
 
 @pytest.fixture
-def transp_engine():
-    engine = Engine(get_context())
+def green_engine(engine):
+    engine.image = engine.gen_image((1, 1), "green")
+    return engine
+
+
+@pytest.fixture
+def green_image(green_engine, mocker):
+    return mocker.spy(green_engine, "image")
+
+
+@pytest.fixture
+def transp_engine(engine):
     with open(join(STORAGE_PATH, "paletted-transparent.png"), "rb") as image_file:
         buffer = image_file.read()
     engine.load(buffer, "png")
@@ -386,3 +350,57 @@ def test_rotate_preserves_transparency(degrees, transp_engine, transp_pixels):
     assert img.format == "PNG"
     expected_transp_pixels = transp_pixels
     assert sum(a == 0 for a in img.export_pixels()[3::4]) == expected_transp_pixels
+
+
+def test_strip_icc(green_engine, green_image):
+    green_engine.strip_icc()
+    green_image.profiles.__delitem__.assert_called_once_with("icc")
+
+
+def test_strip_exif(green_engine, green_image):
+    green_engine.strip_exif()
+    assert green_image.profiles.__delitem__.call_count == 3
+    green_image.profiles.__delitem__.assert_any_call("exif")
+    green_image.profiles.__delitem__.assert_any_call("iptc")
+    green_image.profiles.__delitem__.assert_any_call("xmp")
+
+
+def test_flip_vertically(green_engine, green_image):
+    green_engine.flip_vertically()
+    green_image.flip.assert_called_once_with()
+
+
+def test_flip_horizontally(green_engine, green_image):
+    green_engine.flip_horizontally()
+    green_image.flop.assert_called_once_with()
+
+
+def test_crop(green_engine, green_image):
+    green_engine.crop(1.0, 2.0, 3.0, 4.0)
+    green_image.crop.assert_called_once_with(left=1, top=2, right=3, bottom=4)
+
+
+def test_resize(green_engine, green_image):
+    green_engine.resize(1.0, 2.0)
+    green_image.resize.assert_called_once_with(1, 2)
+
+
+@pytest.mark.parametrize("degrees", [60, 90, 123.45])
+def test_rotate(degrees, green_engine, green_image):
+    green_engine.rotate(degrees)
+    green_image.rotate.assert_called_once_with(degrees)
+
+
+@pytest.mark.parametrize(
+    "pos, merge, expected_operator",
+    [
+        ((359, 179), True, "over"),
+        ((179, 359), False, "atop"),
+    ],
+)
+def test_paste(pos, merge, expected_operator, green_engine, green_image):
+    other_engine = MagicMock()
+    green_engine.paste(other_engine, pos, merge)
+    green_image.composite.assert_called_once_with(
+        other_engine.image, pos[0], pos[1], expected_operator
+    )
