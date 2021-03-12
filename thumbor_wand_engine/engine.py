@@ -13,6 +13,7 @@ from thumbor.utils import deprecated
 from wand.drawing import Drawing
 from wand.image import Image
 from wand.image import IMAGE_TYPES
+from wand.image import ORIENTATION_TYPES
 
 
 GRAYSCALE_TYPE = IMAGE_TYPES[2]
@@ -113,6 +114,9 @@ class Engine(BaseEngine):
         del self.image.profiles["exif"]
         del self.image.profiles["iptc"]
         del self.image.profiles["xmp"]
+
+    def get_orientation(self):
+        return ORIENTATION_TYPES.index(self.image.orientation)
 
     def draw_rectangle(self, x, y, width, height):  # pragma: no cover
         """draw_rectangle is used only in `/debug` routes"""

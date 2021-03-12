@@ -19,6 +19,7 @@ from thumbor_wand_engine.engine import Engine
 from unittest.mock import MagicMock
 from wand.color import Color
 from wand.image import IMAGE_TYPES
+from wand.image import ORIENTATION_TYPES
 
 import pytest
 
@@ -397,3 +398,11 @@ def test_paste(pos, merge, expected_operator, green_engine, green_image):
     green_image.composite.assert_called_once_with(
         other_engine.image, pos[0], pos[1], expected_operator
     )
+
+
+@pytest.mark.parametrize(
+    "orientation_int, orientation_str", enumerate(ORIENTATION_TYPES)
+)
+def test_get_orientation(orientation_int, orientation_str, green_engine):
+    green_engine.image.orientation = orientation_str
+    assert green_engine.get_orientation() == orientation_int
