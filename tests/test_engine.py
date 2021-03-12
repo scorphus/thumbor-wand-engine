@@ -411,3 +411,31 @@ def test_get_orientation(orientation_int, orientation_str, green_engine):
 def test_reorientate(green_engine, green_image):
     green_engine.reorientate()
     green_image.auto_orient.assert_called_once_with()
+
+
+@pytest.mark.parametrize(
+    "method",
+    [
+        "convert_to_grayscale",
+        "enable_alpha",
+        "gen_image",
+        "get_orientation",
+        "image_data_as_rgb",
+        "is_multiple",
+        "paste",
+        "read",
+        "resize",
+        "rotate",
+        "set_image_data",
+        "strip_exif",
+        "strip_icc",
+    ],
+)
+def test_engine_implements_required_method(method):
+    assert method in vars(Engine)
+    assert callable(getattr(Engine, method))
+
+
+def test_engine_implements_required_property():
+    assert "size" in vars(Engine)
+    assert isinstance(Engine.size, property)
