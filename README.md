@@ -57,7 +57,7 @@ ENGINE = "thumbor_wand_engine"
 2.  Install pre-commit (we recommend [installing][pre-commit-install] it not as
     part of the virtual environment — use your system's package manager)
 
-3.  Install wand-engine in editable mode with all required dependencies:
+3.  Install thumbor-wand-engine in editable mode with all required dependencies:
 
         $ make setup
 
