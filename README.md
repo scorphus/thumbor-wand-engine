@@ -92,7 +92,7 @@ See [LICENSE][] for details.
 
 [build-badge]: https://github.com/scorphus/thumbor-wand-engine/workflows/build/badge.svg
 [build-link]: https://github.com/scorphus/thumbor-wand-engine/actions/workflows/build.yml
-[codecov-badge]: https://codecov.io/gh/scorphus/thumbor-wand-engine/branch/main/graph/badge.svg
+[codecov-badge]: https://codecov.io/gh/scorphus/thumbor-wand-engine/branch/main/graph/badge.svg?token=DsYnnMtO6b
 [codecov-link]: https://codecov.io/gh/scorphus/thumbor-wand-engine
 [imagemagick]: https://imagemagick.org
 [license]: LICENSE
