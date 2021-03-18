@@ -9,7 +9,6 @@
 # Copyright (c) 2020-2021, Pablo S. Blum de Aguiar <scorphus@gmail.com>
 
 from os import path
-from setuptools import find_packages
 from setuptools import setup
 
 
@@ -58,7 +57,7 @@ setup(
         "Topic :: Multimedia :: Graphics :: Presentation",
         "Environment :: Plugins",
     ],
-    packages=find_packages(),
+    packages=["thumbor_wand_engine"],
     include_package_data=True,
     install_requires=[
         "thumbor",
