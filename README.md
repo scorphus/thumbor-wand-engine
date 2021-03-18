@@ -1,4 +1,4 @@
-# thumbor-wand-engine [![Build Status][build-badge]][build-link] [![Coverage Status][codecov-badge]][codecov-link]
+# thumbor-wand-engine [![Build Status][build-badge]][build-link] [![Coverage Status][codecov-badge]][codecov-link] [![Code Quality][codacy-badge]][codacy-link]
 
 thumbor-wand-engine is an [ImageMagick][] imaging engine for [thumbor][].
 
@@ -92,6 +92,8 @@ See [LICENSE][] for details.
 
 [build-badge]: https://github.com/scorphus/thumbor-wand-engine/workflows/build/badge.svg
 [build-link]: https://github.com/scorphus/thumbor-wand-engine/actions/workflows/build.yml
+[codacy-badge]: https://app.codacy.com/project/badge/Grade/a09b9a77c55749dca1e9dde3edb7f808
+[codacy-link]: https://www.codacy.com/gh/scorphus/thumbor-wand-engine/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=scorphus/thumbor-wand-engine&amp;utm_campaign=Badge_Grade
 [codecov-badge]: https://codecov.io/gh/scorphus/thumbor-wand-engine/branch/main/graph/badge.svg?token=DsYnnMtO6b
 [codecov-link]: https://codecov.io/gh/scorphus/thumbor-wand-engine
 [imagemagick]: https://imagemagick.org
