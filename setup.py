@@ -26,6 +26,8 @@ tests_require = [
     "pytest",
     "pytest-cov",
     "pytest-mock",
+    "twine",
+    "wheel",
 ]
 
 setup(

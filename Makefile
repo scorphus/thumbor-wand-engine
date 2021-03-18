@@ -92,3 +92,19 @@ integration: compile_ext
 
 test: unit acceptance integration
 .PHONY: test
+
+# packaging targets
+dist-clean:
+	@rm -fr build/*
+	@rm -fr dist/*
+
+dist-build: dist-clean
+	@python setup.py sdist bdist_wheel
+
+# upload to real index
+dist-real-upload: dist-build
+	@twine upload dist/*
+
+# upload to test index
+dist-test-upload: dist-build
+	@twine upload --repository testpypi dist/*
