@@ -12,6 +12,9 @@ from os import path
 from setuptools import setup
 
 
+VERSION = "0.1.0"
+
+
 def read_readme_contents():
     file_dir = path.abspath(path.dirname(__file__))
     with open(path.join(file_dir, "README.md"), encoding="utf-8") as f:
@@ -32,7 +35,7 @@ tests_require = [
 
 setup(
     name="thumbor_wand_engine",
-    version="0.0.1",
+    version=VERSION,
     description="ImageMagick imaging engine for Thumbor.",
     long_description=read_readme_contents(),
     long_description_content_type="text/markdown",
