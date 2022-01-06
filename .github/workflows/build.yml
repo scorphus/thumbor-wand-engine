@@ -25,11 +25,12 @@ jobs:
     steps:
       - name: Install missing APT dependencies
         run: apt update && apt install -y curl git libmagickwand-dev
-      - uses: actions/checkout@v2
-        with:
-          submodules: recursive
+      - name: Checkout repository
+        uses: actions/checkout@v2
       - name: Checkout submodules
-        uses: textbook/git-checkout-submodule-action@2.1.1
+        uses: srt32/git-actions@v0.0.3
+        with:
+          args: git submodule update --init --recursive
       - name: Setup
         if: matrix.test-kind != 'LINT_TEST'
         run: make setup-ci
