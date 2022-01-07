@@ -78,8 +78,10 @@ unit:
 .PHONY: unit
 
 acceptance: compile_ext
-	@env ENGINE=thumbor_wand_engine pytest -sv --cov=thumbor_wand_engine --cov-append \
-		thumbor_tests/filters/ $(IGNORE_TESTS)
+	@cd thumbor; \
+		env ENGINE=thumbor_wand_engine pytest -sv \
+		--cov=thumbor_wand_engine --cov-append \
+		tests/filters/ $(IGNORE_TESTS)
 .PHONY: acceptance
 
 coverage-html: unit acceptance

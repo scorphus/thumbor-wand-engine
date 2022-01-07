@@ -40,7 +40,7 @@ import pytest
 ) = IMAGE_TYPES
 
 
-STORAGE_PATH = abspath(join(dirname(__file__), "../thumbor_tests/fixtures/images/"))
+STORAGE_PATH = abspath(join(dirname(__file__), "../thumbor/tests/fixtures/images/"))
 
 
 def get_context():
