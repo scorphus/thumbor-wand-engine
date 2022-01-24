@@ -110,3 +110,8 @@ dist-real-upload: dist-build
 # upload to test index
 dist-test-upload: dist-build
 	@twine upload --repository testpypi dist/*
+
+# run thumbor with wand engine
+run: compile_ext
+	@ENGINE=thumbor_wand_engine thumbor --use-environment true \
+		-l debug -d -c thumbor/thumbor/thumbor.conf
