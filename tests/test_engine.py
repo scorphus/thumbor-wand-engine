@@ -61,7 +61,8 @@ def engine():
 
 
 @pytest.fixture
-def green_engine(engine):
+def green_engine():
+    engine = Engine(get_context())
     engine.image = engine.gen_image((1, 1), "green")
     return engine
 
@@ -72,9 +73,10 @@ def green_image(green_engine, mocker):
 
 
 @pytest.fixture
-def transp_engine(engine):
+def transp_engine():
     with open(join(STORAGE_PATH, "paletted-transparent.png"), "rb") as image_file:
         buffer = image_file.read()
+    engine = Engine(get_context())
     engine.load(buffer, "png")
     return engine
 
@@ -439,3 +441,8 @@ def test_engine_implements_required_method(method):
 def test_engine_implements_required_property():
     assert "size" in vars(Engine)
     assert isinstance(Engine.size, property)
+
+
+def test_has_transparency(green_engine, transp_engine):
+    assert green_engine.has_transparency() is False
+    assert transp_engine.has_transparency() is True

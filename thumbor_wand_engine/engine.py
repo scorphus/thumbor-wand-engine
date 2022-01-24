@@ -129,3 +129,6 @@ class Engine(BaseEngine):
             draw.stroke_width = 1
             draw.rectangle(x, y, width=width, height=height)
             draw(self.image)
+
+    def has_transparency(self):
+        return any(self.image.export_pixels(channel_map="O"))
