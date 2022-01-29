@@ -12,7 +12,7 @@ You can install the package from [PyPI][] with `pip`:
 
 ### Requirements
 
--   Python 3.6 or higher
+-   Python 3.7 or higher
 -   MagickWand library
     -   `libmagickwand-dev` for APT on Debian/Ubuntu
     -   `ImageMagick-devel` for Yum on CentOS

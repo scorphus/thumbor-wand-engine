@@ -16,7 +16,6 @@ jobs:
       fail-fast: false
       matrix:
         image-tag:
-          - 36
           - 37
           - 38
           - 39
