@@ -131,4 +131,7 @@ class Engine(BaseEngine):
             draw(self.image)
 
     def has_transparency(self):
-        return any(self.image.export_pixels(channel_map="O"))
+        if self.image.alpha_channel:
+            minima, _ = self.image.range_channel("alpha")
+            return minima < self.image.quantum_range
+        return False
