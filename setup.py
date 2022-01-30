@@ -36,7 +36,7 @@ tests_require = [
 setup(
     name="thumbor_wand_engine",
     version=VERSION,
-    description="ImageMagick imaging engine for Thumbor.",
+    description="ImageMagick imaging engine for Thumbor",
     long_description=read_readme_contents(),
     long_description_content_type="text/markdown",
     keywords="thumbor imaging imagemagick magickwand magick wand",
